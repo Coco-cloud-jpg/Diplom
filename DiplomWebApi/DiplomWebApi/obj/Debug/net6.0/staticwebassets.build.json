@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "RptMyuOp9u0zHOasZOH43ue74D8WJ3X9wTH8ragz6P0=",
+  "Source": "ScreenMonitorService",
+  "BasePath": "_content/ScreenMonitorService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
