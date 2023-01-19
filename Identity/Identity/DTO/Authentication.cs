@@ -16,5 +16,6 @@ namespace Identity.DTO
         public string Access { get; set; }
         [Required]
         public string Refresh { get; set; }
+        public long ValidUntil { get; set; }
     }
 }

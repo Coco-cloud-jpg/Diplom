@@ -13,9 +13,9 @@ namespace Common.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public Guid RoleId { get; set; }
-        public Guid? CompanyId { get; set; }
+        public Nullable<Guid> CompanyId { get; set; }
         public Role Role { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

@@ -74,7 +74,7 @@ namespace Identity.Controllers
 
         private async Task<AuthenticationResponse> CreateTokens(User user)
         {
-            var accessToken = _jwtService.CreateAccessToken(user);
+            var accessToken = _jwtService.CreateAccessToken(user, out long validUntil);
             var refreshToken = _jwtService.CreateRefreshToken();
 
             await _identityUnitOfWork.RefreshTokenRepository.Create(new RefreshToken
@@ -87,7 +87,8 @@ namespace Identity.Controllers
 
             return new AuthenticationResponse { 
                 Access = accessToken,
-                Refresh = refreshToken
+                Refresh = refreshToken,
+                ValidUntil = validUntil
             };
         }
     }

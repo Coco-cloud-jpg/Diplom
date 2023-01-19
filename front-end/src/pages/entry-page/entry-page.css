@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300;1,400;1,500&display=swap');
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    font-family: Montserrat;
+}
+#entry-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: rgb(176,85,228);
+    background: linear-gradient(0deg, rgba(176,85,228,1) 0%, rgba(194,118,238,1) 37%, rgba(219,196,233,1) 100%);
+    background-size: 400% 400%;
+    animation: Gradient 15s ease infinite;
+    box-sizing: border-box;
+}
+form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: auto 0;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+}
+
+form h2 {
+    margin-bottom: 5px;
+    text-align: center;
+    text-shadow: 0 4px 16px #fff;
+    font-size: 30px;
+    font-weight: 100;
+}
+fieldset {
+    margin: 10px;
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+fieldset ul {
+    margin: 0;
+    padding: 0;
+}
+fieldset ul li {
+    display: grid;
+    align-items: center;
+    margin: 10px;
+}
+
+fieldset ul li em {
+    grid-column: span 2;
+    text-align: center;
+    padding: 5px;
+}
+fieldset ul li label {
+    text-align: left;
+    padding-bottom: 2px;
+}
+fieldset ul li input {
+    padding: 5px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+fieldset ul li input:hover,
+fieldset ul li input:focus {
+    border: 1px solid #aaf;
+    outline:none;
+}
+form button {
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 auto;
+    margin-top: 10px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    width: 356px;
+}
+
+form a {
+    text-decoration: underline;
+    color: #02c;
+    cursor: pointer;
+}
+
+.primaryButton {
+    background: #a238df;
+    color: #fff;
+}
+
+.primaryButton:hover{
+    background: #9228Af;
+}
+
+.secondaryButton {
+    background: #a273bd;
+    color: #fff;
+}
+
+.secondaryButton:hover {
+    background: #82539d;
+}
+
+.backButton,
+.goToButton {
+    position: relative;
+}
+
+.arrow {
+    position: absolute;
+    left: 10px;
+    top: 12px;
+}
+
+.icon-right-abs {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+}

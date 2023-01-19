@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Identity.Migrations
 {
-    public partial class AddCompany : Migration
+    public partial class addcompany : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +13,7 @@ namespace Identity.Migrations
                 name: "CompanyId",
                 table: "Users",
                 type: "uniqueidentifier",
-                nullable: true,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "Company",
@@ -23,7 +22,8 @@ namespace Identity.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
+                    email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,8 +40,7 @@ namespace Identity.Migrations
                 table: "Users",
                 column: "CompanyId",
                 principalTable: "Company",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

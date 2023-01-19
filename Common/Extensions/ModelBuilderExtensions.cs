@@ -37,8 +37,8 @@ namespace Common.Extensions
                 .IsRequired()
                 .HasColumnName("password");
 
-            entity.HasOne(e => e.Role).WithMany(item => item.Users).HasForeignKey(item => item.RoleId);
-            entity.HasOne(e => e.Company).WithMany(item => item.Users).HasForeignKey(item => item.CompanyId);
+            entity.HasOne(e => e.Role).WithMany(item => item.Users).HasForeignKey(item => item.RoleId).IsRequired();
+            entity.HasOne(e => e.Company).WithMany(item => item.Users).HasForeignKey(item => item.CompanyId).IsRequired(false);
         }
         public static void AddRefreshTokenEntityBase(this EntityTypeBuilder<RefreshToken> entity)
         {
@@ -57,6 +57,7 @@ namespace Common.Extensions
                 .HasMaxLength(150)
                 .IsRequired()
                 .HasColumnName("email");
+
         }
     }
 }

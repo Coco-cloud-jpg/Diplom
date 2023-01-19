@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Identity.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20230117152716_AddCompany")]
-    partial class AddCompany
+    [Migration("20230118215701_addcompany")]
+    partial class addcompany
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,9 @@ namespace Identity.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -97,7 +100,6 @@ namespace Identity.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid?>("CompanyId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
@@ -151,9 +153,7 @@ namespace Identity.Migrations
                 {
                     b.HasOne("Common.Models.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("Common.Models.Role", "Role")
                         .WithMany("Users")

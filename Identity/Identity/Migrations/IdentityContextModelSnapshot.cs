@@ -98,7 +98,6 @@ namespace Identity.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid?>("CompanyId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
@@ -152,9 +151,7 @@ namespace Identity.Migrations
                 {
                     b.HasOne("Common.Models.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("Common.Models.Role", "Role")
                         .WithMany("Users")

@@ -20,7 +20,7 @@ namespace Identity.Services
             _configuration = configuration;
         }
 
-        public string CreateAccessToken(User user)
+        public string CreateAccessToken(User user, out long validUntil)
         {
             var expiration = DateTime.UtcNow.AddMinutes(EXPIRATION_MINUTES);
 
@@ -31,6 +31,7 @@ namespace Identity.Services
             );
 
             var tokenHandler = new JwtSecurityTokenHandler();
+            validUntil = new DateTimeOffset(expiration).ToUnixTimeMilliseconds();
 
             return tokenHandler.WriteToken(token);
         }
