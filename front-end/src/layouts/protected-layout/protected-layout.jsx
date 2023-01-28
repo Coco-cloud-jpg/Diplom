@@ -1,20 +1,28 @@
 import { Navigate, useOutlet } from "react-router-dom";
 import { useAuth } from "../../hooks/auth";
-import {Link} from 'react';
+import {Link, useEffect} from 'react';
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import Sidenav from "../../components/sidenav/sidenav";
+import './protected-layout.css';
+import HomePage from "../../pages/home-page/home-page";
+import {refreshTokens} from '../../helpers/axiosHelper';
 
 const ProtectedLayout = () => {
   const [tokens] = useLocalStorage("tokens", null);
   const outlet = useOutlet();
 
-  if (!tokens) {
+  //refreshTokens();
+
+  if (!tokens) {//restores
     return <Navigate to="/login" />;
   }
 
   return (
-    <div>
-      {outlet}
+    <Sidenav>
+    <div className="content">
+      {outlet ?? <HomePage />}
     </div>
+    </Sidenav>
   )
 };
 

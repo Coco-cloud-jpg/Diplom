@@ -1,5 +1,7 @@
 ﻿using Common.Interfaces;
+using Common.Models;
 using Common.Repositories.Repository;
+using RecordingService.DTOS;
 using ScreenMonitorService.Interfaces;
 using ScreenMonitorService.Models;
 
@@ -7,22 +9,34 @@ namespace ScreenMonitorService.Repositories.Repository
 {
     public class ScreenUnitOfWork : BaseUnitOfWork, IScreenUnitOfWork
     {
-        private IGenericRepository<Customer> _customerRepository;
+        private IGenericRepository<Company> _companyRepository;
         private IGenericRepository<RecorderRegistration> _recorderRegistrationRepository;
         private IGenericRepository<Screenshot> _screenshotRepository;
+        private IGenericRepository<RecorderRegistrationReadDTO> _recorderRegistrationDTORepository;
         public ScreenUnitOfWork(ScreenContext context)
             : base(context)
         {
         }
-        public IGenericRepository<Customer> CustomerRepository
+        public IGenericRepository<RecorderRegistrationReadDTO> RecorderRegistrationDTORepository
         {
             get
             {
-                if (this._customerRepository == null)
+                if (this._recorderRegistrationDTORepository == null)
                 {
-                    this._customerRepository = new GenericRepository<Customer>(_context);
+                    this._recorderRegistrationDTORepository = new GenericRepository<RecorderRegistrationReadDTO>(_context);
                 }
-                return _customerRepository;
+                return _recorderRegistrationDTORepository;
+            }
+        }
+        public IGenericRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (this._companyRepository == null)
+                {
+                    this._companyRepository = new GenericRepository<Company>(_context);
+                }
+                return _companyRepository;
             }
         }
         public IGenericRepository<RecorderRegistration> RecorderRegistrationRepository

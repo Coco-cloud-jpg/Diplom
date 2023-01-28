@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/token")]
     [ApiController]
     [AllowAnonymous]
     public class TokenController : ControllerBase
@@ -26,9 +26,9 @@ namespace Identity.Controllers
             _con = con;
         }
         [HttpGet]
-        public ActionResult Get()
+        public ActionResult Get(string val)
         {
-            return Ok(_con.AsEnumerable());
+            return Ok(_cryptoService.ComputeSHA256(val));
         }
         [HttpPost]
         public async Task<ActionResult<AuthenticationResponse>> CreateBearerToken(AuthenticationRequest request)
@@ -36,10 +36,14 @@ namespace Identity.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Bad credentials");
 
-            var user = await _identityUnitOfWork.UserRepository.DbSet.Include(item => item.Role).FirstOrDefaultAsync(item => item.Email == request.Email);
+            var user = await _identityUnitOfWork.UserRepository.DbSet.Include(item => item.Role)
+                .Include(item => item.Company).FirstOrDefaultAsync(item => item.Email == request.Email);
 
             if (user == null || !user.Password.Equals(_cryptoService.ComputeSHA256(request.Password)))
                 return BadRequest("Bad credentials");
+
+            if (!user.Company.IsActive)
+                return BadRequest("Your company is deleted!");
 
             var lastToken = await _identityUnitOfWork.RefreshTokenRepository.DbSet.FirstOrDefaultAsync(item => item.UserId == user.Id);
 

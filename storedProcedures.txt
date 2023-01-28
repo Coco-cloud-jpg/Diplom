@@ -1,0 +1,12 @@
+
+alter procedure GetRecordersInfo(@includeDeleted bit = null, @companyId uniqueidentifier)
+as
+select Id, TimeCreated, HolderName, HolderSurname, IsActive,
+isnull((select count(1) from Screenshots as s
+where s.RecorderId = r.Id and cast(DateCreated as date) = cast(GETUTCDATE() as date)
+group by cast(DateCreated as date)), 0) as ScreenshotsToday,
+isnull((select count(1) from Screenshots as s
+where s.RecorderId = r.Id), 0) as ScreenshotsTotal
+from RecorderRegistrations as r 
+where (case when @includeDeleted = 1 then 1 else IsActive end) = 1
+and r.CompanyId = @companyId

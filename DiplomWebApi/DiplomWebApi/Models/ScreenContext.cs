@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Extensions;
+using Common.Models;
+using Microsoft.EntityFrameworkCore;
+using RecordingService.DTOS;
 
 namespace ScreenMonitorService.Models
 {
@@ -13,66 +16,34 @@ namespace ScreenMonitorService.Models
         {
         }
 
-        public virtual DbSet<Customer> Customers { get; set; } = null!;
+        public virtual DbSet<Company> Companies { get; set; } = null!;
         public virtual DbSet<RecorderRegistration> RecorderRegistrations { get; set; } = null!;
         public virtual DbSet<Screenshot> Screenshots { get; set; } = null!;
+        public virtual DbSet<RecorderRegistrationReadDTO> RecorderRegistrationDTOs { get; set; } = null!;
 
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=LAPTOP-7MCGKLEC\\SQLEXPRESS;Database=FirstVersion;Trusted_Connection=True;");
-            }
-        }
-        */
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>(entity =>
+            modelBuilder.Entity<Company>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.AddCompnayEntityBase();
+            });
 
-                entity.Property(e => e.DateCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateCreated");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(150)
-                    .HasColumnName("name");
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.AddUserEntityBase();
             });
 
             modelBuilder.Entity<RecorderRegistration>(entity =>
             {
-                entity.HasIndex(e => e.MacAddress, "UQ__Recorder__B01A99EC45745763")
-                    .IsUnique();
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
-
-                entity.Property(e => e.ApiKey).HasColumnName("apiKey");
-
-                entity.Property(e => e.CustomerId).HasColumnName("customerId");
-
-                entity.Property(e => e.MacAddress)
-                    .HasMaxLength(25)
-                    .HasColumnName("macAddress");
-
-                entity.Property(e => e.TimeCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("timeCreated");
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.RecorderRegistrations)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK__RecorderR__custo__276EDEB3");
+                entity.AddRecorderRegistrationEntityBase();
             });
 
             modelBuilder.Entity<Screenshot>(entity =>
             {
-                entity.HasOne(item => item.Customer).WithMany(item => item.Screenshots).HasForeignKey(item => item.CustomerId);
+                entity.AddScreenshotEntityBase();
             });
+
+            modelBuilder.Entity<RecorderRegistrationReadDTO>().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
         }

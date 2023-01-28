@@ -1,0 +1,15 @@
+.notFoundWrapper {
+    text-align: center;
+    font-size: 36px;
+}
+
+.notFoundWrapper :nth-child(2n + 1) {
+    color: #9eb5df;
+}
+
+p {
+    width: 200px;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 12px;
+}

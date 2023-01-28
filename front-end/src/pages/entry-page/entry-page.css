@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300;1,400;1,500&display=swap');
 
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6, p, label {
     margin: 0;
     font-family: Montserrat;
 }
@@ -10,8 +10,7 @@ h1, h2, h3, h4, h5, h6, p {
     align-items: center;
     width: 100%;
     height: 100vh;
-    background: rgb(176,85,228);
-    background: linear-gradient(0deg, rgba(176,85,228,1) 0%, rgba(194,118,238,1) 37%, rgba(219,196,233,1) 100%);
+    background: linear-gradient(0deg, rgba(85,136,228,1) 0%, rgba(118,181,238,1) 37%, rgba(196,233,224,1) 100%);
     background-size: 400% 400%;
     animation: Gradient 15s ease infinite;
     box-sizing: border-box;
@@ -73,7 +72,7 @@ fieldset ul li input:focus {
     border: 1px solid #aaf;
     outline:none;
 }
-form button {
+form button, .formWrapper > button {
     cursor: pointer;
     padding: 10px;
     margin: 0 auto;
@@ -93,21 +92,12 @@ form a {
 }
 
 .primaryButton {
-    background: #a238df;
+    background: #5588e4;
     color: #fff;
 }
 
 .primaryButton:hover{
-    background: #9228Af;
-}
-
-.secondaryButton {
-    background: #a273bd;
-    color: #fff;
-}
-
-.secondaryButton:hover {
-    background: #82539d;
+    background: #3578c4;
 }
 
 .backButton,
@@ -125,4 +115,21 @@ form a {
     position: absolute;
     right: 10px;
     top: 12px;
+}
+
+.formWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.createCompany, .backButton{
+    margin-top: 40px !important;
+}
+
+#password {
+    width: 242px;
+}
+
+.primaryButton:disabled {
+    cursor: not-allowed;
 }

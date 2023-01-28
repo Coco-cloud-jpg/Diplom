@@ -64,6 +64,7 @@ namespace Identity.Services
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}" ),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.Name),
+                new Claim("CompanyId", user.CompanyId?.ToString() ?? ""),
             };
 
         private SigningCredentials CreateSigningCredentials() =>

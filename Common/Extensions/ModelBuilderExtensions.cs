@@ -37,8 +37,9 @@ namespace Common.Extensions
                 .IsRequired()
                 .HasColumnName("password");
 
-            entity.HasOne(e => e.Role).WithMany(item => item.Users).HasForeignKey(item => item.RoleId).IsRequired();
-            entity.HasOne(e => e.Company).WithMany(item => item.Users).HasForeignKey(item => item.CompanyId).IsRequired(false);
+            entity.HasOne(e => e.Role).WithMany(e => e.Users).HasForeignKey(e => e.RoleId).IsRequired();
+            entity.HasOne(e => e.Company).WithMany(e => e.Users).HasForeignKey(e => e.CompanyId).IsRequired(false);
+            entity.HasOne(e => e.PasswordReset).WithOne(e => e.User).HasForeignKey<User>(e => e.PasswordResetId).IsRequired(false);
         }
         public static void AddRefreshTokenEntityBase(this EntityTypeBuilder<RefreshToken> entity)
         {
@@ -58,6 +59,24 @@ namespace Common.Extensions
                 .IsRequired()
                 .HasColumnName("email");
 
+            entity.HasOne(e => e.Country).WithMany(e => e.Companies).HasForeignKey(e => e.CountryId).IsRequired();
+        }
+
+        public static void AddRecorderRegistrationEntityBase(this EntityTypeBuilder<RecorderRegistration> entity)
+        {
+            entity.HasOne(e => e.Company).WithMany(c => c.RecorderRegistrations).HasForeignKey(e => e.CompanyId).IsRequired();
+        }
+        public static void AddScreenshotEntityBase(this EntityTypeBuilder<Screenshot> entity)
+        {
+            entity.HasOne(e => e.Recorder).WithMany(c => c.Screenshots).HasForeignKey(e => e.RecorderId).IsRequired();
+        }
+        public static void AddCountryEntityBase(this EntityTypeBuilder<Country> entity)
+        {
+            entity.Property(e => e.Name).HasMaxLength(40);
+        }
+        public static void AddPasswordResetEntityBase(this EntityTypeBuilder<PasswordReset> entity)
+        {
+            entity.HasOne(e => e.User).WithOne(e => e.PasswordReset).HasForeignKey<PasswordReset>(e => e.UserId).IsRequired().OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

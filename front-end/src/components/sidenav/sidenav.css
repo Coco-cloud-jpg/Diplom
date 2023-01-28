@@ -1,0 +1,12 @@
+.sideNav {
+    background: #5588e4;
+}
+
+.ListItemText svg {
+    background: #fff;
+    color: #5588e4;
+}
+
+li {
+    color: #fff !important;
+}

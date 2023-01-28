@@ -10,22 +10,32 @@ namespace Identity.DTO
         [Required]
         public string LastName { get; set; }
 
-        [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]
+        [MinLength(5)]
         public string Password { get; set; }
 
         [Required]
         public Guid RoleId { get; set; }
         public Guid CompanyId { get; set; }
     }
-    public class UserUpdate
+    public class AdminCreate
     {
+        [Required]
         public string FirstName { get; set; }
+
+        [Required]
         public string LastName { get; set; }
+
+        [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        [MinLength(5)]
         public string Password { get; set; }
-        public Guid RoleId { get; set; }
+        [Required]
+        public Guid CompanyId { get; set; }
     }
 }

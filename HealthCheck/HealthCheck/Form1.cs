@@ -1,8 +1,8 @@
 using HealthCheck.Services;
 using HealthCheck.WINAPI;
 using Newtonsoft.Json;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Management;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -16,6 +16,8 @@ namespace HealthCheck
         private const string _offText = "STOP";
         private const int _msInSecond = 1000;
         private readonly string _currentMacAddress;
+        private Guid _companyId = Guid.Parse("E2B7C12C-CDA8-4FDA-B6F0-CE5450679F2B");
+        private Guid _recorderId = Guid.Parse("E2B7C12C-CDA8-4FDA-B6F0-CE5450679F2B");
         private Keyboard keyboardhook;
         private StringBuilder currentWord = new StringBuilder();
         private long _lastInputTimeStamp = 0;
@@ -29,7 +31,8 @@ namespace HealthCheck
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
+            //string hostName = Dns.GetHostName();
+            //string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
             //User32.AllowSetForegroundWindow((uint)Process.GetCurrentProcess().Id);
             //User32.SetForegroundWindow(Handle);
             //User32.ShowWindow(Handle, User32.SW_SHOWNORMAL);
@@ -37,9 +40,9 @@ namespace HealthCheck
             InitializeComponent();
 
             //_currentMachineName = Environment.MachineName;
-            _currentMacAddress = GetMACAddress();
+            //_currentMacAddress = GetMACAddress();
             _screenCapturer = new ScreenCapturer();
-            if (!CheckAccess(_currentMacAddress, Guid.NewGuid()))
+            if (!CheckAccess(_recorderId, _companyId))
             {
                 buttonWrapper.Hide();
                 activityToggle.Hide();
@@ -114,7 +117,7 @@ namespace HealthCheck
                     {
                         if (_myTimer.Enabled)
                         {
-                            _screenCapturer.SendToWebAPI(_currentMacAddress);
+                            _screenCapturer.SendToWebAPI(_recorderId);
                             await Task.Delay(_msInSecond * 60 * 3 + rnd.Next(0,180) * _msInSecond);//5 minutes delay when screenshot craeted
                         }
 
@@ -185,25 +188,34 @@ namespace HealthCheck
         }   
         private class ScreenAuthorizationDTO
         {
-            public Guid CustomerId { get; set; }
-            public string MachineKey { get; set; }
+            public Guid CompanyId { get; set; }
+            public Guid RecorderId { get; set; }
         }
-        private bool CheckAccess(string macAddress, Guid customerId)
+        private bool CheckAccess(Guid recorderId, Guid companyId)
         {
-            using (var httpClient = new HttpClient())
+            try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44375/api/screen/authorize");
-                request.Content = new StringContent(JsonConvert.SerializeObject(new ScreenAuthorizationDTO { MachineKey = macAddress, CustomerId = customerId }));
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = httpClient.Send(request, HttpCompletionOption.ResponseHeadersRead);
-                var responseRaw = JsonConvert.DeserializeObject<bool>(response.Content.ReadAsStringAsync().Result);
+                using (var httpClient = new HttpClient())
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44375/api/recordings/authorize");
+                    request.Content = new StringContent(JsonConvert.SerializeObject(new ScreenAuthorizationDTO { RecorderId = recorderId, CompanyId = companyId }));
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    var response = httpClient.Send(request, HttpCompletionOption.ResponseHeadersRead);
 
-                return responseRaw;
+                    if (response.IsSuccessStatusCode)
+                        _recorderId = JsonConvert.DeserializeObject<Guid>(response.Content.ReadAsStringAsync().Result);
+
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
         private static string AddressBytesToString(byte[] addressBytes)
         {
-            return string.Join("-", (from b in addressBytes
+            return string.Join(":", (from b in addressBytes
                                      select b.ToString("X2")).ToArray());
         }
     }

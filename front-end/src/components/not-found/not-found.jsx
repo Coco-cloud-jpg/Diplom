@@ -1,7 +1,7 @@
 import { memo, useCallback } from "react";
 import {useNavigate} from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import '../../pages/entry-page/entry-page.css';
+import "./not-found.css"
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -10,8 +10,14 @@ const NotFound = () => {
   , [navigate]);
 
   return <section id="entry-page">
-        Not found
-        <button onClick={navigateTo("/home")}>Go to home page</button>
+        <form>     
+          <div className="notFoundWrapper">
+            <span>4</span>
+            <span>0</span>
+            <span>4</span>
+          </div>   
+          <p>There is no content under path you specified.</p>
+        <button onClick={navigateTo("/home")}>Go to home page</button></form>
         </section>
 }
 

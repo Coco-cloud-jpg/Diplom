@@ -1,30 +1,60 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import {useNavigate} from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import '../../pages/entry-page/entry-page.css';
+import {Snackbar,Alert} from '@mui/material';
+import axios from 'axios';
+import SuccessfullRegister from "../successful-register/successful-register";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const navigateTo = useCallback((route) => () =>
-    navigate(route)
-  , [navigate]);
+  const [notify, setNotify] = useState({open: false, message: ""});
+  const [requesSubmit, setRequesSubmit] = useState(false);
+  const [inputEmail, setInputEmail] = useState("");
+
+  const submit = async (e) => {
+    e.preventDefault();
+
+    try {
+        if (inputEmail === "") {
+            setNotify({open:true, message: "Provide email to send reset link to!"});
+            return;
+        }
+        
+        var data = await axios.post('https://localhost:7063/api/register/password-reset-request', {email: inputEmail})
+        console.log(data);
+        setRequesSubmit(true);
+    }
+    catch (ex){
+        setNotify({open:true, message: ex.response.data});
+        setRequesSubmit(false);
+    }
+}
 
   return <section id="entry-page">
-        <form>
-          <h2>Reset Password</h2>
-          <fieldset>
-            <ul>
-              <li>
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" required/>
-              </li>
-            </ul>
-          </fieldset>
-          <button className="primaryButton">Send Reset Link</button>
-          <button className="backButton" type="button" onClick={navigateTo("/login")}>
-              <FaArrowLeft className="arrow"/><span>Go Back</span>
-          </button>
-        </form>
+            <div className="formWrapper">
+            {requesSubmit ? 
+            <SuccessfullRegister><p>Mail with password reset link was sent to your mailbox!</p></SuccessfullRegister>
+              :
+              <><Snackbar
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              open={notify.open}
+              onClose={() => setNotify({open: false})}
+              ><Alert severity="error">{notify.message}</Alert></Snackbar>
+            <form>
+              <h2>Reset Password Request</h2>
+              <fieldset>
+                <ul>
+                  <li>
+                    <label htmlFor="email">Email:</label>
+                    <input type="email" id="email" value={inputEmail} onChange={(e) => setInputEmail(e.target.value)} required/>
+                  </li>
+                </ul>
+              </fieldset>
+              <button className="primaryButton" onClick={submit}>Send Reset Link</button>
+            </form>
+            <button className="backButton" type="button" onClick={() => navigate("/login")}>Go Back</button>
+            </>}
+            </div>
         </section>
 }
 

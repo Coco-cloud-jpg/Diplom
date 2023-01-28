@@ -8,6 +8,9 @@ namespace Identity.Interfaces
     {
         IGenericRepository<User> UserRepository { get; }
         IGenericRepository<RefreshToken> RefreshTokenRepository { get; }
+        IGenericRepository<Company> CompanyRepository { get; }
+        IGenericRepository<Country> CountryRepository { get; }
+        IGenericRepository<PasswordReset> PasswordResetRepository { get; }
         Task SaveChangesAsync(CancellationToken cancel);
     }
 }

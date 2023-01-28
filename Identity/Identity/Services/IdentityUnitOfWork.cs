@@ -9,7 +9,10 @@ namespace Identity.Repositories.Repository
     public class IdentityUnitOfWork : BaseUnitOfWork, IIdentityUnitOfWork
     {
         private IGenericRepository<User> _userRepository;
+        private IGenericRepository<Company> _companyRepository;
+        private IGenericRepository<Country> _countryRepository;
         private IGenericRepository<RefreshToken> _refreshTokenRepository;
+        private IGenericRepository<PasswordReset> _passwordResetRepository;
         public IdentityUnitOfWork(IdentityContext context)
             : base(context)
         {
@@ -23,6 +26,39 @@ namespace Identity.Repositories.Repository
                     this._userRepository = new GenericRepository<User>(_context);
                 }
                 return _userRepository;
+            }
+        }
+        public IGenericRepository<PasswordReset> PasswordResetRepository
+        {
+            get
+            {
+                if (this._passwordResetRepository == null)
+                {
+                    this._passwordResetRepository = new GenericRepository<PasswordReset>(_context);
+                }
+                return _passwordResetRepository;
+            }
+        }
+        public IGenericRepository<Country> CountryRepository
+        {
+            get
+            {
+                if (this._countryRepository == null)
+                {
+                    this._countryRepository = new GenericRepository<Country>(_context);
+                }
+                return _countryRepository;
+            }
+        }
+        public IGenericRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (this._companyRepository == null)
+                {
+                    this._companyRepository = new GenericRepository<Company>(_context);
+                }
+                return _companyRepository;
             }
         }
         public IGenericRepository<RefreshToken> RefreshTokenRepository

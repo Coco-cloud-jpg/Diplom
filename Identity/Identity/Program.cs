@@ -17,6 +17,7 @@ builder.Services.AddDbContext<IdentityContext>(opt => opt.UseSqlServer(configura
 builder.Services.AddServices();
 builder.Services.AddSwaggerGen();
 builder.Services.AddJwt(configuration);
+builder.Services.AddEmail(configuration);
 
 var app = builder.Build();
 
@@ -25,7 +26,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+} 
 
 app.UseCors(corsPolicy);
 

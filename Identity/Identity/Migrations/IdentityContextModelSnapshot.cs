@@ -28,9 +28,11 @@ namespace Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -49,7 +51,72 @@ namespace Identity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company");
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("Companies", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Models.Country", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Models.PasswordReset", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PasswordResets", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Models.RecorderRegistration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HolderSurname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("TimeCreated")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("RecorderRegistrations", (string)null);
                 });
 
             modelBuilder.Entity("Common.Models.RefreshToken", b =>
@@ -73,7 +140,7 @@ namespace Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Common.Models.Role", b =>
@@ -88,7 +155,47 @@ namespace Identity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00551457-f277-4ca9-9cf0-611268bdd2a3"),
+                            Name = "SystemAdmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("b458e703-4168-446e-a163-63d0f9034d93"),
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = new Guid("00001457-f277-4ca9-9cf0-63d0f9034d93"),
+                            Name = "CompanyAdmin"
+                        });
+                });
+
+            modelBuilder.Entity("Common.Models.Screenshot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RecorderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StorePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecorderId");
+
+                    b.ToTable("Screenshots", (string)null);
                 });
 
             modelBuilder.Entity("Common.Models.User", b =>
@@ -112,6 +219,9 @@ namespace Identity.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("firstName");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -124,6 +234,9 @@ namespace Identity.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("password");
 
+                    b.Property<Guid?>("PasswordResetId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
@@ -133,7 +246,52 @@ namespace Identity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("220f6a19-370a-431a-96be-3e0c8bc1b193"),
+                            Email = "palya1703@gmail.com",
+                            FirstName = "Pavlo",
+                            IsActive = false,
+                            LastName = "Koval",
+                            Password = "779498b489bd0915a7091d4bdfb95d0f2a1dfa8b4fd9003280b0c7984ffea817",
+                            RoleId = new Guid("00551457-f277-4ca9-9cf0-611268bdd2a3")
+                        });
+                });
+
+            modelBuilder.Entity("Common.Models.Company", b =>
+                {
+                    b.HasOne("Common.Models.Country", "Country")
+                        .WithMany("Companies")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Common.Models.PasswordReset", b =>
+                {
+                    b.HasOne("Common.Models.User", "User")
+                        .WithOne("PasswordReset")
+                        .HasForeignKey("Common.Models.PasswordReset", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.RecorderRegistration", b =>
+                {
+                    b.HasOne("Common.Models.Company", "Company")
+                        .WithMany("RecorderRegistrations")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Common.Models.RefreshToken", b =>
@@ -145,6 +303,17 @@ namespace Identity.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.Screenshot", b =>
+                {
+                    b.HasOne("Common.Models.RecorderRegistration", "Recorder")
+                        .WithMany("Screenshots")
+                        .HasForeignKey("RecorderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recorder");
                 });
 
             modelBuilder.Entity("Common.Models.User", b =>
@@ -166,7 +335,19 @@ namespace Identity.Migrations
 
             modelBuilder.Entity("Common.Models.Company", b =>
                 {
+                    b.Navigation("RecorderRegistrations");
+
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Common.Models.Country", b =>
+                {
+                    b.Navigation("Companies");
+                });
+
+            modelBuilder.Entity("Common.Models.RecorderRegistration", b =>
+                {
+                    b.Navigation("Screenshots");
                 });
 
             modelBuilder.Entity("Common.Models.Role", b =>
@@ -176,6 +357,8 @@ namespace Identity.Migrations
 
             modelBuilder.Entity("Common.Models.User", b =>
                 {
+                    b.Navigation("PasswordReset");
+
                     b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618

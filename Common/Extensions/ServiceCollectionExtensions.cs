@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Common.Emails;
 using Common.Services;
 using Common.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,6 +36,15 @@ namespace Common.Extensions
                         )
                     };
                 });
+        }
+
+        public static void AddEmail(this IServiceCollection services, IConfiguration configuration)
+        {
+            var emailConfig = configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddSingleton<IEmailSender, EmailSender>();
         }
 
         public static void AddKeyVault(this ConfigurationManager configuration)

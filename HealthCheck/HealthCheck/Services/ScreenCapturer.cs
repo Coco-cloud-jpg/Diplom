@@ -16,7 +16,7 @@ namespace HealthCheck.Services
             _httpClientService = new HttpClientService();
             _httpClient = new HttpClient();
         }
-        public void SendToWebAPI(string senderMacAddress)
+        public void SendToWebAPI(Guid recorderId)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace HealthCheck.Services
                 resizedImage.Save(stream, ImageFormat.Jpeg);
                 byte[] bytes = stream.ToArray();
 
-                var json = JsonConvert.SerializeObject(new ScreenshotCreateModel { Base64 = Convert.ToBase64String(bytes), SenderName = senderMacAddress });
+                var json = JsonConvert.SerializeObject(new ScreenshotCreateModel { Base64 = Convert.ToBase64String(bytes), RecorderId = recorderId });
 
                 System.Diagnostics.Trace.WriteLine("Sending to api start");
 
