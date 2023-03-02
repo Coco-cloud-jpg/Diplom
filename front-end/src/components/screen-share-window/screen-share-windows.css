@@ -1,0 +1,16 @@
+.connecting,
+.no-connection {
+    width: 500px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    color: #1976d2;
+    font-size: 32;
+    text-transform: uppercase;
+}
+
+.connecting div {
+    margin-top: 15px;
+}

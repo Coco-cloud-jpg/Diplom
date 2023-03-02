@@ -4,9 +4,12 @@ using DiplomWebApi.DTOS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RecordingService.Services.Interfaces;
 using ScreenMonitorService.Interfaces;
 using ScreenMonitorService.Models;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 using System.Collections.Concurrent;
 
 namespace DiplomWebApi.Controllers
@@ -17,13 +20,15 @@ namespace DiplomWebApi.Controllers
     public class ScreenController : ControllerBase
     {
         private IScreenUnitOfWork _unitOfWork;
+        private IOcrService _ocrService;
         private IBlobService _blobService;
-        public ScreenController(IScreenUnitOfWork unitOfWork, IBlobService blobService)
+        public ScreenController(IScreenUnitOfWork unitOfWork, IBlobService blobService, IOcrService ocrService)
         {
             _unitOfWork = unitOfWork;
             _blobService = blobService;
+            _ocrService = ocrService;
         }
-
+        //TODO Add recorder token login table, though only one instance can add screenshots via login
         [HttpPost]
         public async Task<IActionResult> AddScreenShot([FromBody] ScreenshotCreateDTO model)
         {
@@ -44,11 +49,16 @@ namespace DiplomWebApi.Controllers
                 //    return null;
                 
                 var img = Image.Load(Convert.FromBase64String(model.Base64));
-                var dateTimeNow = DateTime.UtcNow;
+                img.Mutate(x => x.Resize(new ResizeOptions
+                {
+                    Size = new Size(img.Width / 2, img.Height / 2)
+                }));
 
+                var dateTimeNow = DateTime.UtcNow;
+                
                 var screenId = Guid.NewGuid();
                 var path = $"{companyId}/{model.RecorderId}/{screenId}.jpeg";
-                await _blobService.UploadFileBlobAsync("screenshots", model.Base64, path);
+                await _blobService.UploadFileBlobAsync("screenshots", img.ToBase64String(JpegFormat.Instance), path);
 
                 await _unitOfWork.ScreenshotRepository.Create(new Screenshot
                 {
@@ -59,6 +69,9 @@ namespace DiplomWebApi.Controllers
                 }, CancellationToken.None);
 
                 await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+
+                //not awaited proccessing
+                await _ocrService.Process(model.Base64, companyId, model.RecorderId, screenId, _unitOfWork);
 
                 return Ok();
             }

@@ -13,6 +13,7 @@ import "./recorders-page.css"
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import ConfirmationPopup from '../../components/confirmation-popup/confirmation-popup';
 import { useCallback } from 'react';
+import AddUserPopup from '../../components/add-user-popup/add-user-popup';
 
 const RecordersPage = () => {
     const [rows, setRows] = useState([]);
@@ -23,6 +24,7 @@ const RecordersPage = () => {
     const [includeDeleted, setIncludeDeleted] = useState(false);
     const [gridReload, setGridReload] = useState(false);
     const navigator = useNavigate();
+    const [addUserPopup, setAddUserPopup] = useState(false);
     console.log("render")
     const renderDetailsButton = useCallback((params) => {
         const id = params.row.id;
@@ -137,7 +139,15 @@ const RecordersPage = () => {
                 }
             },
         }}>
-        <div><Switch onClick={(e) => {setIncludeDeleted(!includeDeleted)}}/>Include disabled</div>
+        <div className='recorders-page-panel'>
+            <div><Switch onClick={(e) => {setIncludeDeleted(!includeDeleted)}}/>Include disabled</div>
+            <Button onClick={() => setAddUserPopup(true)} variant="outlined" color="success">Add new recorder</Button>
+            <AddUserPopup opened={addUserPopup} close={() => {
+                setAddUserPopup(false);
+                setGridReload(!gridReload);
+            }
+                }/>
+        </div>
       <DataGrid
         rows={rows}
         columns={columns}

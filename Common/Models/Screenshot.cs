@@ -11,7 +11,15 @@ namespace Common.Models
         public Guid RecorderId { get; set; }
         public DateTime DateCreated { get; set; }
         public string StorePath { get; set; }
+        public AlertState Mark { get; set; }
 
         public RecorderRegistration Recorder { get; set; }
+    }
+
+    public enum AlertState
+    {
+        None,
+        InternalWarning,
+        SubmittedViolation
     }
 }

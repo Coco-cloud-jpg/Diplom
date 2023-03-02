@@ -1,6 +1,7 @@
 using Common.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RecordingService.Hubs;
 using ScreenMonitorService.Extensions;
 using ScreenMonitorService.Models;
 
@@ -14,11 +15,22 @@ configuration.AddKeyVault();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors((a) => a.AddPolicy(corsPolicy, policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+builder.Services.AddCors((a) => {
+    a.AddPolicy(corsPolicy, policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+    a.AddPolicy("hubs", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
+    });
+});
 builder.Services.AddDbContext<ScreenContext>(opt => opt.UseSqlServer(configuration["ConnectionStrings:DiplomaIdentity"]));
 builder.Services.AddServices();
 builder.Services.AddJwt(configuration);
 builder.Services.AddBlob(configuration["ConnectionStrings:Blob"]);
+builder.Services.AddSignalR(o => o.MaximumReceiveMessageSize = long.MaxValue);
+builder.Services.AddEmail(configuration);
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -63,7 +75,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpLogging();
 app.UseCors(corsPolicy);
-
+app.MapHub<ScreenShareHub>("/screenShare");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

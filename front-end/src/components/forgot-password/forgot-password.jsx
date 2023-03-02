@@ -1,7 +1,7 @@
 import { memo, useCallback, useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import '../../pages/entry-page/entry-page.css';
-import {Snackbar,Alert} from '@mui/material';
+import {Snackbar,Alert, LinearProgress} from '@mui/material';
 import axios from 'axios';
 import SuccessfullRegister from "../successful-register/successful-register";
 
@@ -9,11 +9,12 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [notify, setNotify] = useState({open: false, message: ""});
   const [requesSubmit, setRequesSubmit] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [inputEmail, setInputEmail] = useState("");
 
   const submit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
         if (inputEmail === "") {
             setNotify({open:true, message: "Provide email to send reset link to!"});
@@ -22,6 +23,7 @@ const ForgotPassword = () => {
         
         var data = await axios.post('https://localhost:7063/api/register/password-reset-request', {email: inputEmail})
         console.log(data);
+        setLoading(false);
         setRequesSubmit(true);
     }
     catch (ex){
@@ -52,6 +54,9 @@ const ForgotPassword = () => {
               </fieldset>
               <button className="primaryButton" onClick={submit}>Send Reset Link</button>
             </form>
+            <div className='progress'>
+                {loading && <LinearProgress />}
+              </div>
             <button className="backButton" type="button" onClick={() => navigate("/login")}>Go Back</button>
             </>}
             </div>

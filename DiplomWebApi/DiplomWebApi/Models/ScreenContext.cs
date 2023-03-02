@@ -20,6 +20,7 @@ namespace ScreenMonitorService.Models
         public virtual DbSet<RecorderRegistration> RecorderRegistrations { get; set; } = null!;
         public virtual DbSet<Screenshot> Screenshots { get; set; } = null!;
         public virtual DbSet<RecorderRegistrationReadDTO> RecorderRegistrationDTOs { get; set; } = null!;
+        public virtual DbSet<AppUsageDTO> AppUsageDTOs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,7 +44,42 @@ namespace ScreenMonitorService.Models
                 entity.AddScreenshotEntityBase();
             });
 
+            modelBuilder.Entity<Entry>(entity =>
+            {
+                entity.AddEntryEntityBase();
+                entity.ToTable("Entries");
+            });
+
+            modelBuilder.Entity<PheripheralActivity>(entity =>
+            {
+                entity.AddPheripheralActivityEntityBase();
+                entity.ToTable("PheripheralActivities");
+            });
+
+
+            modelBuilder.Entity<AlertRule>(entity =>
+            {
+                entity.AddAlertRuleEntityBase();
+                entity.ToTable("AlertRules");
+            });
+
+            modelBuilder.Entity<ApplicationInfo>(entity =>
+            {
+                entity.ToTable("ApplicationInfos");
+            });
+
+            modelBuilder.Entity<ApplicationUsageInfo>(entity =>
+            {
+                entity.AddApplicationUsageInfoEntityBase();
+                entity.ToTable("ApplicationUsageInfos");
+            });
+
+
             modelBuilder.Entity<RecorderRegistrationReadDTO>().ToView(null);
+            modelBuilder.Entity<AppUsageDTO>().ToView(null);
+            modelBuilder.Entity<WeeklyReportDTO>().Ignore(item => item.DayOfWeekString).ToView(null);
+            modelBuilder.Entity<ChartDTO>().ToView(null);
+            modelBuilder.Entity<ChartEntranceDTO>().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
         }

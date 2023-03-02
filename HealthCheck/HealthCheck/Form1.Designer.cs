@@ -76,7 +76,7 @@
             this.alertField.Name = "alertField";
             this.alertField.Size = new System.Drawing.Size(0, 15);
             this.alertField.TabIndex = 3;
-            this.alertField.TextAlign = ContentAlignment.TopCenter;
+            this.alertField.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Form1
             // 
@@ -88,11 +88,12 @@
             this.Controls.Add(this.buttonWrapper);
             this.Name = "Form1";
             this.Text = "Health Checker";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed_1);
             this.buttonWrapper.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            this.StartPosition = FormStartPosition.Manual;
+            this.StartPosition = FormStartPosition.Manual; 
             foreach (var scrn in Screen.AllScreens)
             {
                 if (scrn.Bounds.Contains(this.Location))

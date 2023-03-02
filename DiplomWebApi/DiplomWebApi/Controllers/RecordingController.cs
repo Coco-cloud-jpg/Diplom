@@ -1,4 +1,5 @@
 ﻿using Common.Extensions;
+using Common.Models;
 using Common.Services.Interfaces;
 using DiplomWebApi.DTOS;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,6 @@ namespace DiplomWebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Authorize(RecorderAuthorizationDTO model)
         {
-            await _unitOfWork.CompanyRepository.GetAll(CancellationToken.None);
             var recorder = await _unitOfWork.RecorderRegistrationRepository.DbSet.FirstOrDefaultAsync(item => item.CompanyId == model.CompanyId && item.Id == model.RecorderId && item.IsActive);
 
             if (recorder == null)
@@ -36,6 +36,33 @@ namespace DiplomWebApi.Controllers
 
             return Ok(recorder.Id);
 
+        }
+        [HttpPost]
+        [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
+        public async Task<IActionResult> Create(RecorderRegistrationDTO model)
+        {
+            try
+            {
+                var companyId = Guid.Parse(this.GetClaim("CompanyId"));
+
+                await _unitOfWork.RecorderRegistrationRepository.Create(new RecorderRegistration
+                {
+                    Id = Guid.NewGuid(),
+                    CompanyId = companyId,
+                    HolderName = model.HolderName,
+                    HolderSurname = model.HolderSurname,
+                    IsActive = true,
+                    TimeCreated = DateTime.UtcNow
+                }, CancellationToken.None);
+
+                await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
@@ -50,6 +77,41 @@ namespace DiplomWebApi.Controllers
                     new SqlParameter("@includeDeleted", includeDeleted),
                     new SqlParameter("@companyId", companyId)
                     ).ToListAsync(cancellationToken));
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet("{id}")]
+        [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
+        public async Task<IActionResult> GetToday(Guid id)
+        {
+            try
+            {
+                var todayStart = DateTime.UtcNow.Date;
+                var pheripheralActivities = await _unitOfWork.PheripheralActivityRepository.DbSet
+                    .Where(item => item.RecorderId == id && item.DateCreated > todayStart).ToListAsync();
+
+                var quantity = pheripheralActivities.Count;
+                var mouseActivityPercent = 0.0;
+                var keyboardActivityPercent = 0.0;
+
+                if (quantity != 0)
+                {
+                    mouseActivityPercent = pheripheralActivities.Sum(item => item.MouseActivePercentage) / quantity;
+                    keyboardActivityPercent = pheripheralActivities.Sum(item => item.KeyboardActivePercentage) / quantity;
+                }
+
+                var screenshotsCount = await _unitOfWork.ScreenshotRepository.DbSet
+                    .Where(item => item.RecorderId == id && item.DateCreated > todayStart).CountAsync();
+
+                return Ok(new RecorderDetailsTodayDTO
+                {
+                    Screenshots = screenshotsCount,
+                    MouseActivity = mouseActivityPercent,
+                    KeyboardActivity = keyboardActivityPercent
+                });
             }
             catch (Exception e)
             {
@@ -78,22 +140,5 @@ namespace DiplomWebApi.Controllers
                 return NotFound();
             }
         }
-
-        //[HttpPost]
-        //[Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
-        //public async Task<IActionResult> Create(RecorderRegistrationCreateDTO model)
-        //{
-        //    try
-        //    {
-        //        await _unitOfWork.RecorderRegistrationRepository.Delete(model.Id, CancellationToken.None);
-        //        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
-
-        //        return NoContent();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return NotFound();
-        //    }
-        //}
     }
 }

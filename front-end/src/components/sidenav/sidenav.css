@@ -7,6 +7,16 @@
     color: #5588e4;
 }
 
-li {
-    color: #fff !important;
+.selectedNavlink {
+    background: #000;
+}
+
+.activeLink {
+    transition: 1s all;
+    position: absolute;
+    right: 0;
+    background: rgba(210,214,236,1);
+    border-top: 48px solid transparent;
+        
+    border-left: 48px solid #1976D2;
 }

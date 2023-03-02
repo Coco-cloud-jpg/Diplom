@@ -10,7 +10,7 @@ h1, h2, h3, h4, h5, h6, p, label {
     align-items: center;
     width: 100%;
     height: 100vh;
-    background: linear-gradient(0deg, rgba(85,136,228,1) 0%, rgba(118,181,238,1) 37%, rgba(196,233,224,1) 100%);
+    background: linear-gradient(180deg, rgba(210,214,236,1) 0%, rgba(242,247,251,1) 100%);
     background-size: 400% 400%;
     animation: Gradient 15s ease infinite;
     box-sizing: border-box;
@@ -92,7 +92,7 @@ form a {
 }
 
 .primaryButton {
-    background: #5588e4;
+    background: #1976d2;
     color: #fff;
 }
 

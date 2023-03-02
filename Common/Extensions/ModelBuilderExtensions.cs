@@ -78,5 +78,24 @@ namespace Common.Extensions
         {
             entity.HasOne(e => e.User).WithOne(e => e.PasswordReset).HasForeignKey<PasswordReset>(e => e.UserId).IsRequired().OnDelete(DeleteBehavior.NoAction);
         }
+
+        public static void AddEntryEntityBase(this EntityTypeBuilder<Entry> entity)
+        {
+            entity.HasOne(item => item.Recorder).WithMany(item => item.Entries).HasForeignKey(item => item.RecorderId).IsRequired();
+        }
+        public static void AddPheripheralActivityEntityBase(this EntityTypeBuilder<PheripheralActivity> entity)
+        {
+            entity.HasOne(item => item.Recorder).WithMany(item => item.PheripheralActivites).HasForeignKey(item => item.RecorderId).IsRequired();
+        }
+        public static void AddAlertRuleEntityBase(this EntityTypeBuilder<AlertRule> entity)
+        {
+            entity.HasOne(item => item.Recorder).WithMany(item => item.AlertRules).HasForeignKey(item => item.RecorderId).IsRequired(false);
+            entity.HasOne(item => item.Company).WithMany(item => item.AlertRules).HasForeignKey(item => item.CompanyId).IsRequired();
+        }
+        public static void AddApplicationUsageInfoEntityBase(this EntityTypeBuilder<ApplicationUsageInfo> entity)
+        {
+            entity.HasOne(item => item.Recorder).WithMany(item => item.ApplicationUsageInfo).HasForeignKey(item => item.RecorderId).IsRequired();
+            entity.HasOne(item => item.ApplicationInfo).WithMany(item => item.ApplicationUsageInfo).HasForeignKey(item => item.ApplicationId).IsRequired();
+        }
     }
 }

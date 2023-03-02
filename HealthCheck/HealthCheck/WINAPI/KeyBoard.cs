@@ -85,41 +85,6 @@ namespace HealthCheck.WINAPI
         private delegate int keyboardHookCallback(int code, int wParam, ref keyboardHookStruct lParam);
 
         /// <summary>
-        /// The collections of keys to watch for
-        /// </summary>
-        private List<Keys> hookedKeys = new List<Keys>()
-        {
-            Keys.A,
-            Keys.B,
-            Keys.C,
-            Keys.D,
-            Keys.E,
-            Keys.F,
-            Keys.G,
-            Keys.H,
-            Keys.I,
-            Keys.J,
-            Keys.K,
-            Keys.L,
-            Keys.M,
-            Keys.N,
-            Keys.O,
-            Keys.P,
-            Keys.Q,
-            Keys.R,
-            Keys.S,
-            Keys.T,
-            Keys.U,
-            Keys.V,
-            Keys.W,
-            Keys.X,
-            Keys.Y,
-            Keys.Z,
-            Keys.Space,
-            Keys.Back,
-        };
-
-        /// <summary>
         /// Handle to the hook, need this to unhook and call the next hook
         /// </summary>
         private IntPtr hHook = IntPtr.Zero;
@@ -165,7 +130,7 @@ namespace HealthCheck.WINAPI
         {
             this.disposed = false;
             this.supressKeyPress = supressKeyPress;
-            this.HookAllKeys = false;
+            this.HookAllKeys = true;
             khp = new keyboardHookCallback(OnHookCallback);
         }
 
@@ -184,11 +149,6 @@ namespace HealthCheck.WINAPI
         public void AddHookedKey(Keys key)
         {
             ThrowIfDisposed();
-
-            if (!hookedKeys.Contains(key))
-            {
-                hookedKeys.Add(key);
-            }
         }
         public static char GetAsciiCharacter(int uVirtKey)
         {
@@ -206,11 +166,6 @@ namespace HealthCheck.WINAPI
         public void RemoveHookedKey(Keys key)
         {
             ThrowIfDisposed();
-
-            if (hookedKeys.Contains(key))
-            {
-                hookedKeys.Remove(key);
-            }
         }
 
         /// <summary>
@@ -243,7 +198,7 @@ namespace HealthCheck.WINAPI
             {
                 Keys key = (Keys)lParam.vkCode;
 
-                if (HookAllKeys || hookedKeys.Contains(key))
+                if (HookAllKeys)
                 {
                     KeyEventArgs kea = new KeyEventArgs(key);
 
@@ -251,15 +206,11 @@ namespace HealthCheck.WINAPI
                     {
                         OnKeyDown(kea);
                     }
-                    else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null))
-                    {
-                        OnKeyUp(kea);
-                    }
 
-                    if (kea.Handled && supressKeyPress)
+                    /*if (kea.Handled && supressKeyPress)
                     {
                         return 1;
-                    }
+                    }*/
                 }
             }
 
@@ -279,15 +230,6 @@ namespace HealthCheck.WINAPI
                 KeyDown(this, e);
         }
 
-        /// <summary>
-        /// Raises the KeyUp event.
-        /// </summary>
-        private void OnKeyUp(KeyEventArgs e)
-        {
-            if (KeyUp != null)
-                KeyUp(this, e);
-        }
-
         #endregion
 
         #region Disposable
@@ -299,8 +241,6 @@ namespace HealthCheck.WINAPI
                 this.Unhook();
                 this.khp = null;
                 this.hHook = IntPtr.Zero;
-                this.hookedKeys.Clear();
-                this.hookedKeys = null;
                 this.disposed = true;
             }
         }

@@ -5,6 +5,7 @@ import {FormControl, MenuItem, InputLabel, Select, Snackbar,Alert} from '@mui/ma
 import axios from 'axios';
 import "./register.css";
 import SuccessfullRegister from "../successful-register/successful-register";
+import "../../styles/general.css"
 
 const Register = ({setView}) => {
     const navigate = useNavigate();
@@ -84,7 +85,7 @@ const Register = ({setView}) => {
                                 <label htmlFor="email">Email*</label>
                                 <input type="email" id="email" value={inputEmail} onChange={(e) => handleChange(e, setInputEmail)} minLength={5} required />
                             </li>
-                            <FormControl sx={{ m: 1, minWidth: 315 }} size="small" required>
+                            <FormControl sx={{ m: 1, minWidth: 315, '&.Mui-focused': {color: "#0F2E2F"} }} size="small" required>
                                 <InputLabel id="demo-simple-select-label">Country</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -93,7 +94,8 @@ const Register = ({setView}) => {
                                     value={inputCountry}
                                     onChange={(e) =>  handleChange(e, setInputCountry)}
                                 >
-                                    {countries.map(item => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)}
+                                    {countries.map(item => <MenuItem sx={{color: "#000 !important", '&.Mui-hover': {background: "rgba(15, 46, 47, 0.2) "}, '&.Mui-selected': {background: "rgba(15, 46, 47, 0.2)"},}} 
+                                    key={item.id} value={item.id}>{item.name}</MenuItem>)}
                                 </Select>
                             </FormControl>
                             </ul>

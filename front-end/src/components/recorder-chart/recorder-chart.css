@@ -1,0 +1,38 @@
+.wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.chart > div {
+    display: flex; 
+    align-items: center;
+}
+
+.plus {
+    color: #1976D2;
+}
+
+.title {
+    min-width: 100px;
+}
+
+.bar-wrapper {
+    height: 25px;
+    background: #eee;
+    width: 80%; 
+    margin: 5px;
+}
+
+.bar {
+    height: 25px;
+    background: #1976D2;
+    max-width: 500px;
+}

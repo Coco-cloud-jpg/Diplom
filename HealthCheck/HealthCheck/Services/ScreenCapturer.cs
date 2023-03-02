@@ -16,25 +16,22 @@ namespace HealthCheck.Services
             _httpClientService = new HttpClientService();
             _httpClient = new HttpClient();
         }
-        public void SendToWebAPI(Guid recorderId)
+        public void SendScreenshotWebAPI(Guid recorderId, string url = $"{Constants.WebApiURL}api/screen")
         {
             try
             {
                 System.Diagnostics.Trace.WriteLine("Capturing start");
                 Image img = CaptureScreen();
-                Bitmap resizedImage = new Bitmap(img, new Size(img.Width / 2, img.Height / 2));
+                //Bitmap resizedImage = new Bitmap(img, new Size((int)(img.Width / 1.5), (int)(img.Height / 1.5)));
                 using var stream = new MemoryStream();
-                resizedImage.Save(stream, ImageFormat.Jpeg);
+                img.Save(stream, ImageFormat.Jpeg);
+                //resizedImage.Save(stream, ImageFormat.Jpeg);
                 byte[] bytes = stream.ToArray();
 
                 var json = JsonConvert.SerializeObject(new ScreenshotCreateModel { Base64 = Convert.ToBase64String(bytes), RecorderId = recorderId });
 
                 System.Diagnostics.Trace.WriteLine("Sending to api start");
-
-                //_httpClientService.PostStreamAsync($"{Constants.WebApiURL}api/screen", new ScreenshotCreateModel { Base64 = Convert.ToBase64String(bytes), SenderName = senderName }).Wait();
-                //var res = _httpClient.PostAsync("https://localhost:44375/api/Screen", new StringContent(json, Encoding.UTF8, "application/json")).Result;
-
-                _httpClient.PostAsync($"{Constants.WebApiURL}api/screen", new StringContent(json, Encoding.UTF8, "application/json"));
+                _httpClient.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"));
             }
             catch (Exception e)
             {
@@ -42,7 +39,54 @@ namespace HealthCheck.Services
             }
         }
 
-        private Image CaptureScreen()
+        public void SendEntryWebAPI(Guid recorderId, uint seconds)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(new EntranceCreateDTO { Seconds = seconds, RecorderId = recorderId });
+
+                _httpClient.PostAsync($"{Constants.WebApiURL}api/entrance", new StringContent(json, Encoding.UTF8, "application/json"));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.Message);
+            }
+        }
+        public void SendActivityWebAPI(Guid recorderId, double mouseActivity, double keyboardActivity)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(new PheripheralActivity { 
+                    MouseActivity = mouseActivity, 
+                    KeyboardActivity = keyboardActivity,
+                    RecorderId = recorderId });
+
+                _httpClient.PostAsync($"{Constants.WebApiURL}api/pheripheral", new StringContent(json, Encoding.UTF8, "application/json"));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.Message);
+            }
+        }
+
+        public void SendAppsUsageWebAPI(Guid recorderId, IEnumerable<AppFullInfo> appsInfo)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(new AppInfoSTransferDTO
+                {
+                    AppsInfo = appsInfo,
+                    RecorderId = recorderId
+                });
+
+                _httpClient.PostAsync($"{Constants.WebApiURL}api/apps", new StringContent(json, Encoding.UTF8, "application/json"));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.Message);
+            }
+        }
+        public Image CaptureScreen()
         {
             return CaptureWindow(User32.GetDesktopWindow());
         }

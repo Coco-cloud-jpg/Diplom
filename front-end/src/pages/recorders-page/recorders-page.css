@@ -4,3 +4,9 @@
     width: 100%;
     flex-direction: column;
 }
+
+.recorders-page-panel {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 15px 0;
+}

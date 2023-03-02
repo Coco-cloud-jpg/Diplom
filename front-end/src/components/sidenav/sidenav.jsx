@@ -21,19 +21,28 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import ScreenshotMonitorIcon from '@mui/icons-material/ScreenshotMonitor';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import "./sidenav.css";
+import PersonIcon from '@mui/icons-material/Person';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 
 const navData = [
         {
             id: 0,
-            icon: <HomeIcon style={{color: "rgba(118,181,238,1)", background: "#fff"}}/>,
+            icon: <HomeIcon style={{color: "#fff"}}/>,
             text: "Home",
             link: "/home"
         },
         {
             id: 1,
-            icon: <ScreenshotMonitorIcon  style={{color: "rgba(118,181,238,1)", background: "#fff"}}/>,
+            icon: <ScreenshotMonitorIcon  style={{color: "#fff"}}/>,
             text: "Recorders",
             link: "/recorders"
+        },
+        {
+              id: 2,
+              icon: <CircleNotificationsIcon  style={{color: "#fff"}}/>,
+              text: "Alert rules",
+              link: "/alert-rules"
         }
     ]
 
@@ -53,27 +62,30 @@ const SideNav = (props) => {
   const drawer = (
     <div>
       <Toolbar />
-      <Divider />
       <List>
         {navData.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => {navigate(`/${item.text.toLowerCase()}`)}}>
+          <ListItem key={item.text} disablePadding sx={{background: "#1976D2", marginTop: 1}}>
+            <ListItemButton onClick={() => {navigate(`/${item.text.toLowerCase()}`)}} sx={{position: 'relative'}}>
               <ListItemIcon>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText primaryTypographyProps={{ style: {color: "#fff"} }} primary={item.text} />
+              <ListItemText primaryTypographyProps={{ style: {color: "#fff"}}} primary={item.text} />
+              {location.pathname.startsWith(item.link)?
+                <div className='activeLink'>
+                </div>
+              : <></>}
             </ListItemButton>
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        <ListItem disablePadding>
+        <ListItem disablePadding sx={{background: "#1976D2"}}>
             <ListItemButton onClick={() => {setTokens(null); navigate("/login")}}>
               <ListItemIcon >
-                <LogoutIcon style={{color: "rgba(118,181,238,1)", background: "#fff"}}/>
+                <LogoutIcon style={{color: "#fff"}}/>
               </ListItemIcon>
-              <ListItemText  primaryTypographyProps={{ style: {color: "#fff"} }} primary={"Log out"} />
+              <ListItemText  primaryTypographyProps={{ style: {color: "#E6F4F1"} }} primary={"Log out"} />
             </ListItemButton>
           </ListItem>
       </List>
@@ -84,13 +96,12 @@ const SideNav = (props) => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          background: "rgba(118,181,238,1)",
+          background: "#1976D2",
           boxShadow: "none",
           borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
           borderBottomWidth: "thin",
@@ -126,7 +137,7 @@ const SideNav = (props) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'linear-gradient(0deg, rgba(85,136,228,1) 0%, rgba(118,181,238,1) 37%)'  },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'rgba(210,214,236,1)'  },
           }}
         >
           {drawer}
@@ -135,7 +146,7 @@ const SideNav = (props) => {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'linear-gradient(0deg, rgba(85,136,228,1) 0%, rgba(118,181,238,1) 37%)' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'rgba(210,214,236,1)' },
           }}
           open
         >
@@ -146,91 +157,11 @@ const SideNav = (props) => {
         component="main"
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
-        <Toolbar />
+          <Toolbar />
           {props.children}
       </Box>
     </Box>
   );
 }
 
-/*function Sidenav(props) {
-  const [tokens, setTokens] = useLocalStorage("tokens", null);
-  const navigate = useNavigate();
-
-  const drawer = (
-    <div>
-      <Toolbar />
-      <Divider />
-      <List>
-        {navData.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => {navigate(`/${item.text.toLowerCase()}`)}}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primaryTypographyProps={{ style: {color: "#fff"} }} primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-            <ListItemButton onClick={() => {setTokens(null); navigate("/login")}}>
-              <ListItemIcon >
-                <LogoutIcon style={{color: "rgba(118,181,238,1)", background: "#fff"}}/>
-              </ListItemIcon>
-              <ListItemText  primaryTypographyProps={{ style: {color: "#fff"} }} primary={"Log out"} />
-            </ListItemButton>
-          </ListItem>
-      </List>
-    </div>
-  );
-
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'linear-gradient(0deg, rgba(85,136,228,1) 0%, rgba(118,181,238,1) 37%)' },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-    </Box>
-  );
-}
-
-export default Sidenav;
-/*
-const SideNav = () => {
-    const [open, setopen] = useState(true);
-    const toggleOpen = () => {
-            setopen(!open)
-        }
-
-    return <div className={open? "sidenav":"sidenavClosed"}>
-        <div className="buttonWrapper">
-            <button className="menuBtn" onClick={toggleOpen}>
-                {open? <KeyboardDoubleArrowLeftIcon />: <KeyboardDoubleArrowRightIcon />}
-            </button>
-        </div>
-        {navData.map(item =>{
-            return <NavLink key={item.id} className='sideitem' to={item.link}>
-                      
-                       <span className={open? "linkText": "linkTextClosed"}>{item.icon}{item.text}</span>
-                   </NavLink>
-         })}
-    </div>
-}
- */
 export default memo(SideNav);

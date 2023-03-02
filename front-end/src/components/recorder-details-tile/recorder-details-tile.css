@@ -1,0 +1,44 @@
+.info {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.pheripheral-wrapper, .apps-info {
+    width: 50%;
+    padding: 5%;
+}
+
+.screenshotsCount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: #1976D2;
+}
+
+.pheripheralWrapper {
+    background: #eee;
+    width: 95%;
+    margin: 0 0 0 5%;
+    height: 5px;
+}
+
+.pheripheralInner {
+    height: 5px;
+    background: #1976D2;
+    width: 0;
+}
+
+.mouse-info,
+.keyboard-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.pheripherals {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

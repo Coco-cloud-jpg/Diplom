@@ -1,0 +1,33 @@
+.apps-container {
+    overflow-y: visible;
+}
+
+.graph-wrapper {
+    height: 5px;
+    background: #eee;
+}
+
+.graph {
+    height: 5px;
+}
+
+.title {
+    text-align: left;
+}
+
+.list-item-text {
+    margin-left: 10px;
+}
+
+.list-item-text span {
+    display: block;
+}
+
+.app-data-empty {
+    height: 100%;
+    text-align: center;
+    line-height: 77px;
+    font-size: 40px;
+    color: #1976D2;
+    text-decoration: underline;
+}

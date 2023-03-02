@@ -56,6 +56,13 @@ namespace Identity.Models
                 entity.ToTable("Screenshots");
             });
 
+
+            modelBuilder.Entity<Entry>(entity =>
+            {
+                entity.AddEntryEntityBase();
+                entity.ToTable("Entries");
+            });
+
             modelBuilder.Entity<Country>(entity =>
             {
                 entity.AddCountryEntityBase();
@@ -66,6 +73,29 @@ namespace Identity.Models
             {
                 entity.AddPasswordResetEntityBase();
                 entity.ToTable("PasswordResets");
+            });
+
+            modelBuilder.Entity<PheripheralActivity>(entity =>
+            {
+                entity.AddPheripheralActivityEntityBase();
+                entity.ToTable("PheripheralActivities");
+            });
+
+            modelBuilder.Entity<ApplicationInfo>(entity =>
+            {
+                entity.ToTable("ApplicationInfos");
+            });
+
+            modelBuilder.Entity<ApplicationUsageInfo>(entity =>
+            {
+                entity.AddApplicationUsageInfoEntityBase();
+                entity.ToTable("ApplicationUsageInfos");
+            });
+
+            modelBuilder.Entity<AlertRule>(entity =>
+            {
+                entity.AddAlertRuleEntityBase();
+                entity.ToTable("AlertRules");
             });
 
             modelBuilder.Entity<Role>().HasData(new Role

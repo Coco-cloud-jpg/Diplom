@@ -1,0 +1,30 @@
+.home-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center
+}
+
+.home-wrapper > div{
+    width: 50%;
+}
+
+.card {
+    margin: 10px;
+}
+
+.card > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.card > div > span {
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+
+}
+
+.apps-wrapper {
+}

@@ -2,6 +2,38 @@ import axios from "axios";
 
 var refreshRequest = false;
 
+export const downloadFile = async (url) => { 
+  const access = await refreshTokens();
+
+  const config = {
+      headers:{
+          Authorization: `Bearer ${access}`
+      },
+      responseType: 'blob' 
+    };
+
+  const response = await axios.get(url, config);
+  let filename = 'filename.pdf';
+  const contentDisposition = response.headers['content-disposition'];
+  if (contentDisposition) {
+    const match = contentDisposition.match(/filename="(.+)"/);
+    if (match && match[1]) {
+      filename = match[1];
+    }
+  }
+
+  const urlObject = window.URL.createObjectURL(new Blob([response.data]));
+
+  const tempLink = document.createElement('a');
+  tempLink.href = urlObject;
+  tempLink.setAttribute('download', filename); 
+  document.body.appendChild(tempLink);
+  tempLink.click();
+
+  window.URL.revokeObjectURL(urlObject);
+  document.body.removeChild(tempLink);
+};
+
 export const post = async (url, payload) => {
     const access = await refreshTokens();
 
