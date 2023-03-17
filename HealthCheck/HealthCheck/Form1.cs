@@ -152,7 +152,7 @@ namespace HealthCheck
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44375/api/recordings/authorize");
+                    var request = new HttpRequestMessage(HttpMethod.Post, $"{Constants.WebApiURL}api/recordings/authorize");
                     request.Content = new StringContent(JsonConvert.SerializeObject(new ScreenAuthorizationDTO { RecorderId = recorderId, CompanyId = companyId }));
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     var response = httpClient.Send(request, HttpCompletionOption.ResponseHeadersRead);

@@ -80,14 +80,20 @@ namespace DiplomWebApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
-        public async Task<IActionResult> GetScreenshots(int page, int pageSize, Guid recorderId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetScreenshots(int page, int pageSize, Guid recorderId, bool onlyWarnings, bool onlyViolations, CancellationToken cancellationToken)
         {
             var recorderInfo = await _unitOfWork.RecorderRegistrationRepository.GetById(recorderId, cancellationToken);
 
             if (!recorderInfo.IsActive)
                 return NotFound();
 
-            var screenshots = await _unitOfWork.ScreenshotRepository.DbSet.Where(item => item.RecorderId == recorderId).Select(item => new ScreenshotReadDTO
+            var screenshots = await _unitOfWork.ScreenshotRepository.DbSet.Where(item => item.RecorderId == recorderId && 
+            ((onlyWarnings && onlyViolations ? 
+                    item.Mark != AlertState.None : 
+                        onlyWarnings ? 
+                            item.Mark == AlertState.InternalWarning: 
+                       onlyViolations ? item.Mark == AlertState.SubmittedViolation : true))
+            ).Select(item => new ScreenshotReadDTO
             {
                 Id = item.Id,
                 TimeCreated = item.DateCreated,
@@ -107,7 +113,14 @@ namespace DiplomWebApi.Controllers
                 });
             }).ToArray();
 
-            var totalTask = _unitOfWork.ScreenshotRepository.DbSet.Where(item => item.RecorderId == recorderId).CountAsync();
+            var totalTask = _unitOfWork.ScreenshotRepository.DbSet.Where(item => item.RecorderId == recorderId &&
+                        ((onlyWarnings && onlyViolations ?
+                    item.Mark != AlertState.None :
+                        onlyWarnings ?
+                            item.Mark == AlertState.InternalWarning :
+                       onlyViolations ? item.Mark == AlertState.SubmittedViolation : true))
+            ).CountAsync();
+
             tasks.Append(totalTask);
 
             await Task.WhenAll(tasks);

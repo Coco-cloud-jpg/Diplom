@@ -3,6 +3,7 @@ import { Button, CircularProgress, Modal } from '@mui/material';
 import { Box } from '@mui/system';
 import * as signalR from "@microsoft/signalr";
 import './screen-share-windows.css';
+import { recorderApiUrl } from '../../constants';
 
 const style = {
     position: 'absolute',
@@ -26,7 +27,7 @@ const ScreenShareWindow = ({opened, close, recorderId}) => {
         }, 5000);
 
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:44375/screenShare")
+            .withUrl(`${recorderApiUrl}/screenShare`)
             .build();
         setConnection(newConnection);
 

@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { get } from '../../helpers/axiosHelper';
+import { recorderApiUrl } from '../../constants';
 
 ChartJS.register(
   CategoryScale,
@@ -42,7 +43,7 @@ const HomeEntrance = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`https://localhost:44375/api/entrance/chart/${timeRange}`)).data;
+          var data = (await get(`${recorderApiUrl}/api/entrance/chart/${timeRange}`)).data;
           console.log(data);
           setChartConfigs(
               {

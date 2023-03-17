@@ -98,6 +98,12 @@ namespace Identity.Models
                 entity.ToTable("AlertRules");
             });
 
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.AddCommentEntityBase();
+                entity.ToTable("Comments");
+            });
+
             modelBuilder.Entity<Role>().HasData(new Role
             {
                 Name = nameof(Common.Constants.Role.SystemAdmin),

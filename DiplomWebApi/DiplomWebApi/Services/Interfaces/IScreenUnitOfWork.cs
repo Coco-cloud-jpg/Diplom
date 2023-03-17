@@ -20,6 +20,7 @@ namespace ScreenMonitorService.Interfaces
         IGenericRepository<ChartDTO> ChartDTORepository { get; }
         IGenericRepository<ChartEntranceDTO> ChartEntranceDTORepository { get; }
         IGenericRepository<AlertRule> AlertRuleRepository { get; }
+        IGenericRepository<Comment> CommentRepository { get; }
         Task SaveChangesAsync(CancellationToken cancel);
     }
 }

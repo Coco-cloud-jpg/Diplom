@@ -5,6 +5,7 @@ import './home-apps-chart.css';
 import { CardContent, CircularProgress, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select } from '@mui/material';
 import { get } from '../../helpers/axiosHelper';
 import { secondsToTime } from '../../helpers/dateTimeHelper';
+import { recorderApiUrl } from '../../constants';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
@@ -20,7 +21,7 @@ const HomeAppsChart = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`https://localhost:44375/api/apps/chart/${timeRange}`)).data;
+          var data = (await get(`${recorderApiUrl}/api/apps/chart/${timeRange}`)).data;
 
           if (data.length === 0)
             data.push({name: "No data", seconds: 0})

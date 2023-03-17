@@ -1,5 +1,6 @@
 import { CircularProgress } from "@mui/material";
 import { memo, useEffect, useState } from "react"
+import { recorderApiUrl } from "../../constants";
 import { get } from "../../helpers/axiosHelper";
 import { secondsToTime } from "../../helpers/dateTimeHelper";
 import "./recorder-chart.css";
@@ -12,7 +13,7 @@ const RecorderChart = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`https://localhost:44375/api/entrance/week/${recoredId}`)).data;
+            var data = (await get(`${recorderApiUrl}/api/entrance/week/${recoredId}`)).data;
             //chartData.labels = Object.keys(data);
             setData(data);
             setLoading(false);

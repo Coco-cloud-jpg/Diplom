@@ -22,9 +22,21 @@ namespace ScreenMonitorService.Repositories.Repository
         private IGenericRepository<ChartDTO> _chartDTORepository;
         private IGenericRepository<ChartEntranceDTO> _chartEntranceDTORepository;
         private IGenericRepository<AlertRule> _alertRuleRepository;
+        private IGenericRepository<Comment> _commentRepository;
         public ScreenUnitOfWork(ScreenContext context)
             : base(context)
         {
+        }
+        public IGenericRepository<Comment> CommentRepository
+        {
+            get
+            {
+                if (this._commentRepository == null)
+                {
+                    this._commentRepository = new GenericRepository<Comment>(_context);
+                }
+                return _commentRepository;
+            }
         }
         public IGenericRepository<AlertRule> AlertRuleRepository
         {

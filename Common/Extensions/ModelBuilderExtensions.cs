@@ -97,5 +97,11 @@ namespace Common.Extensions
             entity.HasOne(item => item.Recorder).WithMany(item => item.ApplicationUsageInfo).HasForeignKey(item => item.RecorderId).IsRequired();
             entity.HasOne(item => item.ApplicationInfo).WithMany(item => item.ApplicationUsageInfo).HasForeignKey(item => item.ApplicationId).IsRequired();
         }
+
+        public static void AddCommentEntityBase(this EntityTypeBuilder<Comment> entity)
+        {
+            entity.HasOne(item => item.Screenshot).WithMany(item => item.Comments).HasForeignKey(item => item.ScreenshotId).IsRequired();
+            entity.HasOne(item => item.User).WithMany(item => item.Comments).HasForeignKey(item => item.CreatorId).IsRequired();
+        }
     }
 }

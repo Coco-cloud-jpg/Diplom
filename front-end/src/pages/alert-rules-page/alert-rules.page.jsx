@@ -1,63 +1,75 @@
-import { Button, Switch, TextField } from '@mui/material';
+import { Button, Switch } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { memo } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { get, patch } from '../../helpers/axiosHelper';
+import { destroy, get, patch, put } from '../../helpers/axiosHelper';
 import { getDateTimeString } from '../../helpers/dateTimeHelper';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import "./recorders-page.css"
-import AutorenewIcon from '@mui/icons-material/Autorenew';
 import ConfirmationPopup from '../../components/confirmation-popup/confirmation-popup';
 import { useCallback } from 'react';
-import AddUserPopup from '../../components/add-user-popup/add-user-popup';
+import EditIcon from '@mui/icons-material/Edit';
+import "./alert.rules-page.css";
+import AddRulePopup from '../../components/add-rule-popup/add-rule-popup';
 import { recorderApiUrl } from '../../constants';
 
-const RecordersPage = () => {
+const AlertRulesPage = () => {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
     const [popupMessage, setPopupMessage] = useState("Do you want to disable this recorder?");
-    const [activeState, setActiveState] = useState({id: "", isActive: false});
+    const [idToDelete, setIdToDelete] = useState("");
     const [includeDeleted, setIncludeDeleted] = useState(false);
     const [gridReload, setGridReload] = useState(false);
-    const navigator = useNavigate();
-    const [addUserPopup, setAddUserPopup] = useState(false);
+    const [addRecord, setAddRecord] = useState(false);
+    const [editRecord, setEditRecord] = useState(false);
+    const [selectedRow, setSelectedRow] = useState({});
+    const [controller, setController] = useState({
+        page: 0,
+        pageSize: 5
+      });
+
     console.log("render")
     const renderDetailsButton = useCallback((params) => {
         const id = params.row.id;
-        const isActive = params.row.isActive;
-
         return (
             <div className='buttonsWrapper'>
-                {
-                    params.row.isActive?<Button
+                <Button
                     color="primary"
                     size="small"
+                    className='button-update'
                     onClick={() => {
-                        navigator(`/recorder-info/${id}`)
+                        setEditRecord(true);
+                        setSelectedRow(params.row);
                     }}
                 >
-                    <InfoIcon />
-                </Button> : <></>  
-                }
+                    <EditIcon />
+                </Button>
                 <Button
-                    color={isActive? "error": "success"}
+                    color="error"
                     size="small"
                     onClick={() => {
-                        setActiveState({id: id, isActive: isActive});
-                        setPopupMessage(`Do you want to ${isActive?"disable": "activate"} this recorder?`);
+                        setPopupMessage(`Do you want to delete this rule?`);
                         setDeletePopupOpened(true);
+                        setIdToDelete(id);
                     }}
                 >
-                    {params.row.isActive? <DeleteIcon />: <AutorenewIcon />}
+                    <DeleteIcon />
                 </Button>
             </div>
         )
-    }, [])
+    }, []);
+
+    const renderWordsSection = useCallback((params) => {
+        const words = params.row.serializedWords;
+        return (
+            <div className='wordsWrapper'>
+                {JSON.parse(words).map(item => <div>{item}</div>)}
+            </div>
+        )
+    }, []);
 
     const columns = [
         { 
@@ -66,44 +78,31 @@ const RecordersPage = () => {
             flex: 2
         },
         {
-          field: 'holderName',
-          headerName: 'First name',
+          field: 'toRecorder',
+          headerName: 'Assigned To Recorder',
           editable: false,
           flex: 1
         },
         {
-          field: 'holderSurname',
-          headerName: 'Last name',
-          editable: false,
-          flex: 1
-        },
-        {
-            field: 'isActive',
-            headerName: 'Is Active',
+            field: 'sendToEmail',
+            headerName: 'Send To Email',
             editable: false,
             flex: 1
         },
         {
-          field: 'screenshotsToday',
-          headerName: 'Screenshots Today',
-          type: 'number',
-          editable: false,
-          flex: 1
-        },
-        {
-            field: 'screenshotsTotal',
-            headerName: 'Screenshots Total',
-            type: 'number',
+            field: 'serializedWords',
+            headerName: 'Words',
             editable: false,
-            flex: 1
+            flex: 1,
+            renderCell: renderWordsSection
         },
         {
-            field: 'timeCreated',
+            field: 'dateCreated',
             headerName: 'Time created',
             editable: false,
             flex: 2,
             valueGetter: (params) =>
-                `${getDateTimeString(new Date(params.row.timeCreated.replace("T", " ") + " GMT"))}`,
+                `${getDateTimeString(new Date(params.row.dateCreated.replace("T", " ") + " GMT"))}`,
         },
         {
             field: ' ',
@@ -114,56 +113,59 @@ const RecordersPage = () => {
             disableClickEventBubbling: true,
         }
       ];
-    
+
+    const handlePageChange = (pagenumber) => {
+        console.log(pagenumber);
+        setController({
+          ...controller,
+          page: pagenumber
+        });
+    };
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/recordings?includeDeleted=${includeDeleted}`)).data;
+            var data = (await get(`${recorderApiUrl}/api/alerts?page=${controller.page}&pageSize=${controller.pageSize}`)).data;
             setRows(data);
-            console.log(data);
 
             setLoading(false);
         }
         setRows([]);
         setLoading(true);
         getData()
-    }, [includeDeleted, setIncludeDeleted, gridReload])
+    }, [controller, includeDeleted, setIncludeDeleted, gridReload])
 
     return <>
         <Box sx={{ 
-            height: 780, 
-            width: '100%',
-            '& .isActive--false': {
-                bgcolor: "rgba(211, 47, 47, 0.2)",
-                '&:hover': {
-                    bgcolor: "rgba(211, 47, 47, 0.2) !important",
-                }
-            },
+            height: 600, 
+            width: '100%'
         }}>
         <div className='recorders-page-panel'>
-            <div><Switch onClick={(e) => {setIncludeDeleted(!includeDeleted)}}/>Include disabled</div>
-            <Button onClick={() => setAddUserPopup(true)} variant="outlined" color="success">Add new recorder</Button>
-            <AddUserPopup opened={addUserPopup} close={() => {
-                setAddUserPopup(false);
+            <Button onClick={() => setAddRecord(true)} variant="outlined" color="success">Add new</Button>
+            <AddRulePopup type={1} title="Add Rule" opened={addRecord} close={() => {
+                setAddRecord(false);
                 setGridReload(!gridReload);
             }
                 }/>
+        {editRecord && <AddRulePopup type={2} title="Edit Rule" data={selectedRow} opened={editRecord} close={() => {
+                        setEditRecord(false);
+                        setGridReload(!gridReload);
+                    }
+                    }/>}
         </div>
       <DataGrid
         rows={rows}
         columns={columns}
         loading={loading}
-        pageSize={9}
+        pageSize={5}
         rowHeight={75}
+        onPageChange={handlePageChange}
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
-        getRowClassName={(params) => `isActive--${params.row.isActive}`}
       />
     </Box>
     <ConfirmationPopup opened={deletePopupOpened} handleOk={async () => {
                     try {
-                        console.log("here");
-                        await patch(`${recorderApiUrl}/api/recordings/activate/${activeState.id}?activeState=${!activeState.isActive}`);
+                        await destroy(`${recorderApiUrl}/api/alerts/${idToDelete}`);
                         setDeletePopupOpened(false);
                         setGridReload(!gridReload);
                     }
@@ -174,4 +176,4 @@ const RecordersPage = () => {
     </>
 }
 
-export default memo(RecordersPage);
+export default memo(AlertRulesPage);

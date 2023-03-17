@@ -11,6 +11,9 @@ import NotFound from "./components/not-found/not-found";
 import ResetPassword from "./components/reset-password/reset-password";
 import RecordersPage from "./pages/recorders-page/recorders-page";
 import RecorderInfoPage from "./pages/recorder-info-page/recorder-info-page";
+import AlertRulesPage from "./pages/alert-rules-page/alert-rules.page";
+import WarningsPage from "./pages/warnings-page/warnings-page";
+import ReportsPage from "./pages/reports-page/reports-page";
  
 const CustomRoutes = () => {
    return   <Routes>
@@ -25,6 +28,9 @@ const CustomRoutes = () => {
                     <Route path="home" element={<HomePage />} />
                     <Route path="recorders" element={<RecordersPage />}/>
                     <Route path="recorder-info/:id" element={<RecorderInfoPage />} />
+                    <Route path="alerts" element={<AlertRulesPage />} />
+                    <Route path="warnings" element={<WarningsPage />} />
+                    <Route path="reports" element={<ReportsPage />} />
                 </Route>
                 <Route path="*" element={<NotFound />}/>
             </Routes>;

@@ -7,6 +7,7 @@ import MouseIcon from '@mui/icons-material/Mouse';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import "./recorder-details-tile.css";
 import AppsInfo from "../apps-info/apps-info";
+import { recorderApiUrl } from "../../constants";
 
 const RecorderDetailsTile = ({recoredId}) => {
     const [loading, setLoading] = useState(true);
@@ -14,7 +15,7 @@ const RecorderDetailsTile = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`https://localhost:44375/api/recordings/${recoredId}`)).data;
+            var data = (await get(`${recorderApiUrl}/api/recordings/${recoredId}`)).data;
            
             console.log(data);
 

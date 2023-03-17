@@ -20,3 +20,19 @@
         
     border-left: 48px solid #1976D2;
 }
+
+.drawer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    background-color: #1976D2;
+}
+
+div {
+    border-right: none !important;
+}
+.active {
+    border-left: 3px solid #fff;
+    background: rgba(5, 98, 190, 0.7);
+}

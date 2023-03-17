@@ -1,0 +1,21 @@
+.rdt input {
+    border: 0;
+    border-bottom: 2px solid #000;
+    font-size: 16px;
+    outline: none !important;
+}
+
+.reports-page-wrapper {
+    display: flex;
+
+}
+
+.reports-page-wrapper .configuration {
+    width: 30%;
+    padding: 15px;
+}
+
+.reports-page-wrapper .pdf {
+    width: 69%;
+    margin-left: 1%;
+}

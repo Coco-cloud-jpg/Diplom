@@ -5,6 +5,7 @@ import { CloseFullscreen } from '@mui/icons-material';
 import "./add-user-popup.css";
 import axios from 'axios';
 import { post } from '../../helpers/axiosHelper';
+import { recorderApiUrl } from '../../constants';
 
 const style = {
     position: 'absolute',
@@ -29,7 +30,7 @@ const AddUserPopup = ({opened, close, recorderId}) => {
         e.preventDefault();
         setLoading(true);
 
-        var data = await post ('https://localhost:44375/api/recordings', 
+        var data = await post (`${recorderApiUrl}/api/recordings`, 
             {
                 holderName: inputHolderName, 
                 holderSurname: inputHolderSurname

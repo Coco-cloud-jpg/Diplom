@@ -39,6 +39,7 @@ const Login = () => {
         navigate('/home');
       } 
       catch (e){
+        setLoading(false);
         setNotify({open: true, message: e.response.data});
         console.log(e);
       }  

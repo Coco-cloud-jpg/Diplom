@@ -13,6 +13,7 @@ import { Line } from 'react-chartjs-2';
 import './screenshots-chart.css'
 import { CardContent, CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import {get} from '../../helpers/axiosHelper';
+import { recorderApiUrl } from '../../constants';
 
 ChartJS.register(
   CategoryScale,
@@ -46,7 +47,7 @@ const ScreenshotChart = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`https://localhost:44375/api/screenshots/chart/${timeRange}`)).data;
+          var data = (await get(`${recorderApiUrl}/api/screenshots/chart/${timeRange}`)).data;
 
           setChartConfigs(
               {

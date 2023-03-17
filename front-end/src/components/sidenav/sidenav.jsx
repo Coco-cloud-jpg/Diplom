@@ -24,6 +24,8 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import "./sidenav.css";
 import PersonIcon from '@mui/icons-material/Person';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import WarningIcon from '@mui/icons-material/Warning';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 const navData = [
         {
@@ -41,9 +43,21 @@ const navData = [
         {
               id: 2,
               icon: <CircleNotificationsIcon  style={{color: "#fff"}}/>,
-              text: "Alert rules",
-              link: "/alert-rules"
-        }
+              text: "Alert Rules",
+              link: "/alerts"
+        },
+        {
+              id: 3,
+              icon: <WarningIcon  style={{color: "#fff"}}/>,
+              text: "Warnings",
+              link: "/warnings"
+        },
+        {
+              id: 4,
+              icon: <SummarizeIcon  style={{color: "#fff"}}/>,
+              text: "Reports",
+              link: "/reports"
+      }
     ]
 
 const drawerWidth = 240;
@@ -60,35 +74,33 @@ const SideNav = (props) => {
   };
 
   const drawer = (
-    <div>
-      <Toolbar />
-      <List>
-        {navData.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{background: "#1976D2", marginTop: 1}}>
-            <ListItemButton onClick={() => {navigate(`/${item.text.toLowerCase()}`)}} sx={{position: 'relative'}}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primaryTypographyProps={{ style: {color: "#fff"}}} primary={item.text} />
-              {location.pathname.startsWith(item.link)?
-                <div className='activeLink'>
-                </div>
-              : <></>}
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding sx={{background: "#1976D2"}}>
-            <ListItemButton onClick={() => {setTokens(null); navigate("/login")}}>
-              <ListItemIcon >
-                <LogoutIcon style={{color: "#fff"}}/>
-              </ListItemIcon>
-              <ListItemText  primaryTypographyProps={{ style: {color: "#E6F4F1"} }} primary={"Log out"} />
-            </ListItemButton>
-          </ListItem>
-      </List>
+    <div className="drawer">
+      <div>
+        <List>
+          {navData.map((item) => (
+            <ListItem key={item.text} disablePadding sx={{ marginTop: 1}} className={(location.pathname.startsWith(item.link)?"active":"")}>
+              <ListItemButton onClick={() => {navigate(`${item.link.toLowerCase()}`)}} sx={{position: 'relative'}}>
+                <ListItemIcon>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primaryTypographyProps={{ style: {color: "#fff"}}} primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          <ListItem disablePadding>
+              <ListItemButton onClick={() => {setTokens(null); navigate("/login")}}>
+                <ListItemIcon >
+                  <LogoutIcon style={{color: "#fff"}}/>
+                </ListItemIcon>
+                <ListItemText  primaryTypographyProps={{ style: {color: "#E6F4F1"} }} primary={"Log out"} />
+              </ListItemButton>
+            </ListItem>
+        </List>
+      </div>
+      <div></div>
     </div>
   );
 
@@ -137,7 +149,7 @@ const SideNav = (props) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'rgba(210,214,236,1)'  },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: 'rgba(210,214,236,1)',borderRight: "rgba(0, 0, 0, 0.12) !important"  },
           }}
         >
           {drawer}

@@ -47,8 +47,8 @@ namespace DiplomWebApi.Controllers
 
                 //if (screenshotsToday > RecordingService.Constants.ScreenshotADayMax)
                 //    return null;
-                
-                var img = Image.Load(Convert.FromBase64String(model.Base64));
+                var load = Convert.FromBase64String(model.Base64);
+                var img = Image.Load(load);
                 img.Mutate(x => x.Resize(new ResizeOptions
                 {
                     Size = new Size(img.Width / 2, img.Height / 2)
@@ -58,7 +58,8 @@ namespace DiplomWebApi.Controllers
                 
                 var screenId = Guid.NewGuid();
                 var path = $"{companyId}/{model.RecorderId}/{screenId}.jpeg";
-                await _blobService.UploadFileBlobAsync("screenshots", img.ToBase64String(JpegFormat.Instance), path);
+                var base64Resized = img.ToBase64String(JpegFormat.Instance).Split(",")[1];
+                await _blobService.UploadFileBlobAsync("screenshots", base64Resized, path);
 
                 await _unitOfWork.ScreenshotRepository.Create(new Screenshot
                 {

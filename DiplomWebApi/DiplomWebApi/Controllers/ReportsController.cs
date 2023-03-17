@@ -55,7 +55,14 @@ namespace DiplomWebApi.Controllers
 
             var today = DateTime.UtcNow.Date;
 
+            var totalAlertsCount = await _unitOfWork.ScreenshotRepository.DbSet
+                .Where(item => item.RecorderId == recorderId && item.DateCreated > weekStart && item.Mark != AlertState.None)
+                .Select(item => item.Mark)
+                .ToListAsync();
+
             html = html.Replace("{{data}}", CreateTable(data, appsIcons, today))
+                       .Replace("{{warningsCount}}", totalAlertsCount.Count(item => item == AlertState.InternalWarning).ToString())
+                       .Replace("{{errorsCount}}", totalAlertsCount.Count(item => item == AlertState.SubmittedViolation).ToString())
                        .Replace("{{date}}", today.ToShortDateString())
                        .Replace("{{holder}}", $"{recorder.HolderName} {recorder.HolderSurname}")
                        .Replace("{{reviewer}}", reviewerName);

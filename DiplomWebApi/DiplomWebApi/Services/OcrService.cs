@@ -7,6 +7,7 @@ using RecordingService.Services.Interfaces;
 using ScreenMonitorService.Interfaces;
 using ScreenMonitorService.Models;
 using ScreenMonitorService.Repositories.Repository;
+using System.Text.RegularExpressions;
 
 namespace RecordingService.Services
 {
@@ -42,18 +43,18 @@ namespace RecordingService.Services
                     {
                         foreach (var word in JsonConvert.DeserializeObject<List<string>>(item.SerializedWords))
                         {
-                            if (result.Contains(word.ToLower()))
+                            string pattern = $@"\b{word.ToLower()}\b";
+                            Regex regex = new Regex(pattern);
+
+                            if (regex.IsMatch(result.ToLower()))
                             {
-                                template = template.Replace("{{word}}", word)
+                                var concreteTemplate = template.Replace("{{word}}", word)
                                                    .Replace("{{screenshotId}}", screenshotId.ToString())
                                                    .Replace("{{recorderId}}", screenshot.RecorderId.ToString());
 
-                                var message = new Message(new string[] { item.SendToEmail }, "Word occurence!", template);
+                                var message = new Message(new string[] { item.SendToEmail }, "Word occurence!", concreteTemplate);
 
-                                Task.Run(() =>
-                                {
-                                    _emailSender.SendEmail(message);
-                                });
+                                _emailSender.SendEmail(message);
 
                                 if (screenshot.Mark != Common.Models.AlertState.InternalWarning)
                                 {

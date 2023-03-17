@@ -32,7 +32,9 @@ namespace ScreenMonitorService.Models
             modelBuilder.Entity<User>(entity =>
             {
                 entity.AddUserEntityBase();
+                entity.ToTable("Users");
             });
+
 
             modelBuilder.Entity<RecorderRegistration>(entity =>
             {
@@ -74,6 +76,11 @@ namespace ScreenMonitorService.Models
                 entity.ToTable("ApplicationUsageInfos");
             });
 
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.AddCommentEntityBase();
+                entity.ToTable("Comments");
+            });
 
             modelBuilder.Entity<RecorderRegistrationReadDTO>().ToView(null);
             modelBuilder.Entity<AppUsageDTO>().ToView(null);

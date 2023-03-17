@@ -1,0 +1,12 @@
+.button-update {
+    color: #e6b42c !important;
+}
+
+.button-update:hover {
+    background: rgb(222, 182, 75, 0.2) !important;  
+}
+
+.wordsWrapper > div{
+    margin-left: 10px;
+    border-bottom: 1px solid #000;
+}

@@ -8,23 +8,29 @@ import { CheckBox, Image } from '@mui/icons-material';
 import { getDateTimeString } from '../../helpers/dateTimeHelper';
 import "./recorder-info-page.css"
 import Screenshot from '../../components/screenshot/screenshot';
-import { downloadFile, get } from '../../helpers/axiosHelper';
+import { downloadFile, get, patch } from '../../helpers/axiosHelper';
 import { useNavigate, useParams } from 'react-router-dom';
 import RecorderChart from '../../components/recorder-chart/recorder-chart';
 import RecorderDetailsTile from '../../components/recorder-details-tile/recorder-details-tile';
-import { Button, CardHeader, Switch } from '@mui/material';
+import { Button, CardHeader, CircularProgress, LinearProgress, Switch } from '@mui/material';
 import ScreenShareWindows from '../../components/screen-share-window/screen-share-windows';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import { recorderApiUrl } from '../../constants';
+import ConfirmationPopup from '../../components/confirmation-popup/confirmation-popup';
 
 const RecorderInfoPage = () => {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [holderFullName, setHolderFullName] = useState("");
+    const [deletePopupOpened, setDeletePopupOpened] = useState(false);
     const [screenShare, setScreenShare] = useState(false);
+    const [warnings, setWarnings] = useState(false);
+    const [violations, setViolations] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
+    const [reportLoading, setReportLoading] = useState(false);
     const [controller, setController] = useState({
         page: 0,
         pageSize: 3
@@ -34,8 +40,7 @@ const RecorderInfoPage = () => {
     useEffect(() => {
         async function getData() {
             try {
-              var data = (await get(`https://localhost:44375/api/screenshots?page=${controller.page}&pageSize=${controller.pageSize}&recorderId=${params.id}`)).data;
-              console.log(data);
+              var data = (await get(`${recorderApiUrl}/api/screenshots?page=${controller.page}&pageSize=${controller.pageSize}&recorderId=${params.id}&onlyWarnings=${warnings}&onlyViolations=${violations}`)).data;
               setTotalCount(data.total);
               setRows(data.data);
               setHolderFullName(data.holderFullName);
@@ -48,7 +53,7 @@ const RecorderInfoPage = () => {
 
         setLoading(true);
         getData();
-    }, [controller]);
+    }, [controller, warnings, violations]);
 
     
   const handlePageChange = (pagenumber) => {
@@ -86,26 +91,27 @@ const RecorderInfoPage = () => {
             flex: 1,
             headerClassName: 'grid-header',
             renderCell: (row) => {
-                console.log(row);
                 return <div className="screenshot"><Screenshot url={row.value} id={row.id} recorderId={params.id} updateGrid={setController} page={controller.page} mark={row.row.mark}/></div>
           }
         }
     ];
 
     const downloadWeeklyReport = useCallback(async () => {
-      await downloadFile(`https://localhost:44375/api/reports/weeklyStat/${params.id}`);
+      setReportLoading(true);
+      await downloadFile(`${recorderApiUrl}/api/reports/weeklyStat/${params.id}`);
+      setReportLoading(false);
     });
 
     return <>
-
         <div className='main-info-wrapper'>
           <div className="holder-name">
               {holderFullName}
             </div>
             <div className='button-section'>
-              <Button onClick={downloadWeeklyReport} variant="outlined" sx={{marginRight: 2}} title="Download weekly report"><SummarizeIcon/></Button>
+              <Button onClick={downloadWeeklyReport} variant="outlined" sx={{marginRight: 2}} 
+                title="Download weekly report">{reportLoading && <div className='button-load'><CircularProgress size="1rem" /></div>}<SummarizeIcon/></Button>
               <Button onClick={() => setScreenShare(true)} variant="outlined" sx={{marginRight: 2}} title="Observe Screen Share"><ScreenShareIcon/></Button>
-              <Button onClick={() => console.log("asd")} variant="contained" color="error"><DeleteIcon /></Button>
+              <Button onClick={() => setDeletePopupOpened(true)} variant="contained" color="error"><DeleteIcon /></Button>
               {screenShare && <ScreenShareWindows recorderId={params.id} opened={screenShare} close={() => setScreenShare(false)}/>}
           </div>
         </div>
@@ -152,15 +158,25 @@ const RecorderInfoPage = () => {
         />
         <div className="toggle-wrapper">
           <div>
-              <Switch className={"switch"}/>
+              <Switch onChange={(e) => setWarnings(e.target.checked)} className={"switch"}/>
               <span>Only with warnings</span>
           </div>
           <div>
-              <Switch className={"switch"}/>
+              <Switch onChange={(e) => setViolations(e.target.checked)} className={"switch"}/>
               <span>Only with violations</span>
           </div>
         </div>
         </Box>
+        <ConfirmationPopup opened={deletePopupOpened} handleOk={async () => {
+                    try {
+                        await patch(`${recorderApiUrl}/api/recordings/activate/${params.id}?activeState=${false}`);
+                        setDeletePopupOpened(false);
+                        navigate("/recorders");
+                    }
+                    catch (ex) {
+                        console.log(ex);
+                    }
+                }} handleClose={() => {setDeletePopupOpened(false)}} message="Do you want to disable this recorder?"/>
     </>
 }
 

@@ -1,5 +1,6 @@
 import { List, ListItem, ListItemText, Typography } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react"
+import { recorderApiUrl } from "../../constants";
 import { get } from "../../helpers/axiosHelper";
 import './apps-info.css';
 
@@ -13,11 +14,7 @@ const AppsInfo = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`https://localhost:44375/api/apps/${recoredId}`)).data;
-           
-            console.log(data);
-
-            console.log(data.reduce((accumulator, item) => accumulator + item.seconds, 0))
+            var data = (await get(`${recorderApiUrl}/api/apps/${recoredId}`)).data;
             setData(data);
             setMax(data.reduce((accumulator, item) => accumulator + item.seconds, 0))
         }
@@ -36,7 +33,7 @@ const AppsInfo = ({recoredId}) => {
         bgcolor: 'background.paper',
         position: 'relative',
         overflow: 'auto',
-        maxHeight: 200
+        maxHeight: 180
       }}>
         {data.map((item, i) => 
             <ListItem key={i} title={`${(item.seconds / max * 100).toFixed(2)}% time spent`}>

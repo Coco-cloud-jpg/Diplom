@@ -7,6 +7,7 @@ namespace Common.Models
         public User()
         {
             RefreshTokens = new HashSet<RefreshToken>();
+            Comments = new HashSet<Comment>();
         }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -20,5 +21,6 @@ namespace Common.Models
         public Guid? PasswordResetId { get; set; }
         public virtual PasswordReset PasswordReset { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

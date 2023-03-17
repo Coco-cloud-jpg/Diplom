@@ -55,7 +55,11 @@ export const post = async (url, payload) => {
         }
       };
 
-    return await axios.get(url, config);
+    const response = await axios.get(url, config);
+
+    console.log(response);
+
+    return response;
  }
 
  export const put = async (url, payload) => {
@@ -98,7 +102,6 @@ export const post = async (url, payload) => {
 
  export const refreshTokens = async () => {
     let {access, refresh, validUntil} = JSON.parse(localStorage.getItem("tokens"));
-
     if (validUntil < Date.now() && !refreshRequest) {
         refreshRequest = true;
         var response = await axios.post(`https://localhost:7063/api/token/refresh/${refresh}`);
