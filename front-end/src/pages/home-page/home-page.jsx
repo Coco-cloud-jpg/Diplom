@@ -18,6 +18,9 @@ const HomePage = () => {
                 <Card className='card'>
                     <HomeAppsChart />
                 </Card>
+                <Card className='card'>
+                    <div>asd</div>
+                </Card>
             </div>
     </div>
 }

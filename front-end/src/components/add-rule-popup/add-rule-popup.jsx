@@ -16,7 +16,7 @@ const style = {
     background: "#fff",
     boxShadow: 24,
   };
-
+//баг із декількома щаписами в гріді
 const AddRulePopup = ({opened, close, type, data, title}) => {
     const [loading, setLoading] = useState(false);
     const [inputWords, setInputWords] = useState("");
@@ -30,9 +30,9 @@ const AddRulePopup = ({opened, close, type, data, title}) => {
                 return;
 
             try {
-                var list = (await get(`${recorderApiUrl}/api/alerts/recorders`)).data;
+                let list = (await get(`${recorderApiUrl}/api/alerts/recorders`)).data;
                 setRecordersList(list);   
-                var recorder = list.filter(item => item.name === data.toRecorder)[0];
+                let recorder = list.filter(item => item.name === data.toRecorder)[0];
                 console.log(recorder);
                 if (recorder != null)
                     setInputRecorder(recorder.id);
@@ -48,7 +48,7 @@ const AddRulePopup = ({opened, close, type, data, title}) => {
         }
 
         getCountries();
-    }, [recordersList]);
+    }, []);
 
     const handleChange = (event, callback) => {
         callback(event.target.value);
@@ -127,7 +127,7 @@ const AddRulePopup = ({opened, close, type, data, title}) => {
                             </li>
                         </ul>
                     </fieldset>
-                    <button type='submit' className="primaryButton" onClick={submit}>Create</button>
+                    <button type='submit' className="primaryButton" onClick={submit}>Submit</button>
                 </form>
             <div className='progress'>
              {loading && <LinearProgress />}

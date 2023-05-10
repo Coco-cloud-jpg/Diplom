@@ -23,9 +23,69 @@ namespace ScreenMonitorService.Repositories.Repository
         private IGenericRepository<ChartEntranceDTO> _chartEntranceDTORepository;
         private IGenericRepository<AlertRule> _alertRuleRepository;
         private IGenericRepository<Comment> _commentRepository;
+        private IGenericRepository<PackageType> _packageTypeRepository;
+        private IGenericRepository<PackageTypeCompany> _packageTypeCompanyRepository;
+        private IGenericRepository<CompanyUsersAndRecordersCountDTO> _companyUsersAndRecordersCountDTORepository;
+        private IGenericRepository<BillingTransaction> _billingTransactionRepository;
+        private IGenericRepository<PackageUpgradeRequest> _packageUpgradeRequestRepository;
         public ScreenUnitOfWork(ScreenContext context)
             : base(context)
         {
+        }
+        public IGenericRepository<PackageUpgradeRequest> PackageUpgradeRequestRepository
+        {
+            get
+            {
+                if (this._packageUpgradeRequestRepository == null)
+                {
+                    this._packageUpgradeRequestRepository = new GenericRepository<PackageUpgradeRequest>(_context);
+                }
+                return _packageUpgradeRequestRepository;
+            }
+        }
+        public IGenericRepository<BillingTransaction> BillingTransactionRepository
+        {
+            get
+            {
+                if (this._billingTransactionRepository == null)
+                {
+                    this._billingTransactionRepository = new GenericRepository<BillingTransaction>(_context);
+                }
+                return _billingTransactionRepository;
+            }
+        }
+        public IGenericRepository<CompanyUsersAndRecordersCountDTO> CompanyUsersAndRecordersCountDTORepository
+        {
+            get
+            {
+                if (this._companyUsersAndRecordersCountDTORepository == null)
+                {
+                    this._companyUsersAndRecordersCountDTORepository = new GenericRepository<CompanyUsersAndRecordersCountDTO>(_context);
+                }
+                return _companyUsersAndRecordersCountDTORepository;
+            }
+        }
+        public IGenericRepository<PackageTypeCompany> PackageTypeCompanyRepository
+        {
+            get
+            {
+                if (this._packageTypeCompanyRepository == null)
+                {
+                    this._packageTypeCompanyRepository = new GenericRepository<PackageTypeCompany>(_context);
+                }
+                return _packageTypeCompanyRepository;
+            }
+        }
+        public IGenericRepository<PackageType> PackageTypeRepository
+        {
+            get
+            {
+                if (this._packageTypeRepository == null)
+                {
+                    this._packageTypeRepository = new GenericRepository<PackageType>(_context);
+                }
+                return _packageTypeRepository;
+            }
         }
         public IGenericRepository<Comment> CommentRepository
         {

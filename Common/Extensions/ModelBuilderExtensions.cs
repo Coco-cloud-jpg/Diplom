@@ -103,5 +103,20 @@ namespace Common.Extensions
             entity.HasOne(item => item.Screenshot).WithMany(item => item.Comments).HasForeignKey(item => item.ScreenshotId).IsRequired();
             entity.HasOne(item => item.User).WithMany(item => item.Comments).HasForeignKey(item => item.CreatorId).IsRequired();
         }
+
+        public static void AddPackageTypeCompanyEntityBase(this EntityTypeBuilder<PackageTypeCompany> entity)
+        {
+            entity.HasOne(item => item.Company).WithMany(item => item.PackageTypeCompanies).HasForeignKey(item => item.CompanyId).IsRequired();
+            entity.HasOne(item => item.PackageType).WithMany(item => item.PackageTypeCompanies).HasForeignKey(item => item.PackageTypeId).IsRequired();
+        }
+        public static void AddBillingTransactionEntityBase(this EntityTypeBuilder<BillingTransaction> entity)
+        {
+            entity.HasOne(item => item.Company).WithMany(item => item.BillingTransactions).HasForeignKey(item => item.CompanyId).IsRequired();
+        }
+        public static void AddPackageTypeUpgradeRequests(this EntityTypeBuilder<PackageUpgradeRequest> entity)
+        {
+            entity.HasOne(item => item.Company).WithMany(item => item.PackageUpgradeRequests).HasForeignKey(item => item.CompanyId).IsRequired();
+            entity.HasOne(item => item.PackageType).WithMany(item => item.PackageUpgradeRequests).HasForeignKey(item => item.PackageTypeId).IsRequired();
+        }
     }
 }

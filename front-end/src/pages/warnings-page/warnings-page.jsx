@@ -37,16 +37,6 @@ const WarningsPage = () => {
         setGridReload(!gridReload);
         console.log('Comment submitted:', comment);
       })
-    
-      const handleCancel = () => {
-      }
-    
-      const handleChange = (event) => {
-        console.log("Asdasdasd");
-        comment += "1"; 
-        console.log(event.target.value);
-        setComment(event.target.value);
-      }
 
     const renderWordsSection = useCallback((params) => {
         const base64 = params.row.base64;
@@ -72,7 +62,7 @@ const WarningsPage = () => {
 
     useEffect(() => {
         async function getData() {
-            var response = (await get(`${recorderApiUrl}/api/warnings?page=${page}`)).data;
+            let response = (await get(`${recorderApiUrl}/api/warnings?page=${page}`)).data;
             setRows(response.data);
             setTotalCount(response.total);
             setReloadComments(!commentsReload);

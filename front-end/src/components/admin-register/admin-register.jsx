@@ -48,7 +48,7 @@ const AdminRegister = () => {
                 return;
             }
 
-            var data = await axios.post('https://localhost:7063/api/register/admin', 
+            const data = await axios.post('https://localhost:7063/api/register/admin', 
                 {
                     firstName: inputFirstName, 
                     lastName: inputLastName, 

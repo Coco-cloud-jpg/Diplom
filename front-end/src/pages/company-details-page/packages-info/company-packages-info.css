@@ -1,0 +1,64 @@
+.company-billing {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.prices {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: #1976D2;
+    color: #fff;
+    font-size: 45px;
+}
+
+.prices > div {
+    border: 2px solid #fff;
+    width: 34%;
+    text-align: center;
+}
+
+.billing-info {
+    width: 100%;
+}
+
+.users-count, .recorders-count {
+    margin: 10px;
+    background-color: #eee;
+    height: 5px;
+}
+
+.users-count > div,
+.recorders-count > div{
+    background-color: #1976D2;
+    height: 5px;
+}
+
+.usages h4 {
+    text-align: center;
+}
+
+.packages-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.packages-list .list-item {
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin: 5px;
+}
+
+.packages-list .list-item  h4 {
+    text-align: center;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+
+.packages-list .list-item  h5 {
+    text-align: right;
+    text-transform: lowercase;
+}

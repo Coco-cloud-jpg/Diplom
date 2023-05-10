@@ -34,15 +34,18 @@ namespace Identity.Controllers
         public async Task<ActionResult<AuthenticationResponse>> CreateBearerToken(AuthenticationRequest request)
         {
             if (!ModelState.IsValid)
-                return BadRequest("Bad credentials");
+                return BadRequest("Bad credentials!");
 
             var user = await _identityUnitOfWork.UserRepository.DbSet.Include(item => item.Role)
                 .Include(item => item.Company).FirstOrDefaultAsync(item => item.Email == request.Email);
 
             if (user == null || !user.Password.Equals(_cryptoService.ComputeSHA256(request.Password)))
-                return BadRequest("Bad credentials");
+                return BadRequest("Bad credentials!");
 
-            if (!user.Company.IsActive)
+            if (!user.IsActive)
+                return BadRequest("Your account is disabled!");
+
+            if (user.RoleId != Guid.Parse(Common.Constants.Role.SystemAdmin) && !user.Company.IsActive)
                 return BadRequest("Your company is deleted!");
 
             var lastToken = await _identityUnitOfWork.RefreshTokenRepository.DbSet.FirstOrDefaultAsync(item => item.UserId == user.Id);
@@ -50,9 +53,10 @@ namespace Identity.Controllers
             if (lastToken != null)
                 await _identityUnitOfWork.RefreshTokenRepository.Delete(lastToken.Id, CancellationToken.None);
 
-            var tokens = await CreateTokens(user);
+            var response = await CreateTokens(user);
             await _identityUnitOfWork.SaveChangesAsync(CancellationToken.None);
-            return Ok(tokens);
+            response.RedirectTo = user.RoleId == Guid.Parse(Common.Constants.Role.SystemAdmin) ? "/home-admin" : "/home";
+            return Ok(response);
         }
         [HttpPost("refresh/{token}")]
         public async Task<ActionResult<AuthenticationResponse>> Refresh(string token)

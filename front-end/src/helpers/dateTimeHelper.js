@@ -4,9 +4,9 @@ export const getDateTimeString = (date) => {
 
 export const secondsToTime = (d) => {
     d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
+    let h = Math.floor(d / 3600);
+    let m = Math.floor(d % 3600 / 60);
+    let s = Math.floor(d % 3600 % 60);
     
     return `${pad(h)}:${pad(m)}:${pad(s)}`; 
 }

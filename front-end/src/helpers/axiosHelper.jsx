@@ -1,6 +1,29 @@
 import axios from "axios";
 
-var refreshRequest = false;
+let refreshRequest = false;
+
+export const loadFile = async (url, body) => { 
+  const access = await refreshTokens();
+
+  const config = {
+      headers:{
+          Authorization: `Bearer ${access}`
+      },
+      responseType: 'blob' 
+    };
+
+  const response = await axios.post(url, body, config);
+  let filename = 'filename.pdf';
+  const contentDisposition = response.headers['content-disposition'];
+  if (contentDisposition) {
+    const match = contentDisposition.match(/filename="(.+)"/);
+    if (match && match[1]) {
+      filename = match[1];
+    }
+  }
+
+  return new Blob([response.data], { type: 'application/pdf' });
+};
 
 export const downloadFile = async (url) => { 
   const access = await refreshTokens();
@@ -101,13 +124,13 @@ export const post = async (url, payload) => {
 
 
  export const refreshTokens = async () => {
-    let {access, refresh, validUntil} = JSON.parse(localStorage.getItem("tokens"));
+    let {access, refresh, validUntil} = JSON.parse(sessionStorage.getItem("tokens"));
     if (validUntil < Date.now() && !refreshRequest) {
         refreshRequest = true;
-        var response = await axios.post(`https://localhost:7063/api/token/refresh/${refresh}`);
+        let response = await axios.post(`https://localhost:7063/api/token/refresh/${refresh}`);
         console.log(response);
         access = response.data.access;
-        localStorage.setItem("tokens", JSON.stringify(response.data));
+        sessionStorage.setItem("tokens", JSON.stringify(response.data));
         refreshRequest = false;
     }
 

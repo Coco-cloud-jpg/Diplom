@@ -40,7 +40,7 @@ const RecorderInfoPage = () => {
     useEffect(() => {
         async function getData() {
             try {
-              var data = (await get(`${recorderApiUrl}/api/screenshots?page=${controller.page}&pageSize=${controller.pageSize}&recorderId=${params.id}&onlyWarnings=${warnings}&onlyViolations=${violations}`)).data;
+              let data = (await get(`${recorderApiUrl}/api/screenshots?page=${controller.page}&pageSize=${controller.pageSize}&recorderId=${params.id}&onlyWarnings=${warnings}&onlyViolations=${violations}`)).data;
               setTotalCount(data.total);
               setRows(data.data);
               setHolderFullName(data.holderFullName);

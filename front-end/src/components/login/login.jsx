@@ -28,7 +28,7 @@ const Login = () => {
   const handleSubmit = useCallback((e) => {
     async function submit() {
       try {
-        var response = await axios.post("https://localhost:7063/api/token", {
+        const response = await axios.post("https://localhost:7063/api/token", {
           email: email,
           password: password
         });
@@ -36,7 +36,7 @@ const Login = () => {
         setTokens(response.data);
         console.log(jwt(response.data.access));
         setLoading(false);
-        navigate('/home');
+        navigate(response.data.redirectTo);
       } 
       catch (e){
         setLoading(false);

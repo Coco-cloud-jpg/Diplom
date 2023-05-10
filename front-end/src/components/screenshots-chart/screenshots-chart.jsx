@@ -47,7 +47,7 @@ const ScreenshotChart = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`${recorderApiUrl}/api/screenshots/chart/${timeRange}`)).data;
+          let data = (await get(`${recorderApiUrl}/api/screenshots/chart/${timeRange}`)).data;
 
           setChartConfigs(
               {

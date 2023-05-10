@@ -1,0 +1,47 @@
+.online-status > div {
+    width: 5px;
+    height: 5px;
+    background: #0f0;
+    border-radius: 50%;
+}
+
+.account-info {
+    width: 210px;
+    height: 210px;
+}
+
+.account-info .account-icon {
+    text-align: center;
+}
+
+.account-info .account-icon svg {
+    font-size: 120px;
+}
+
+.account-info p{
+    font-size: 13px;
+    text-align: center;
+}
+
+.account-info p.role-part,
+.account-info p.full-name,
+.account-info p.email-part {
+    margin-bottom: 5px;
+}
+
+.account-info p.role-part {
+    font-weight: 500;
+}
+
+.account-info p.full-name {
+    font-weight: 500;
+    font-size: 16px;
+}
+.account-info .company-part p {
+    font-size: 16px;
+}
+
+.account-info-button {
+    max-width: 100px;
+    float: right;
+}

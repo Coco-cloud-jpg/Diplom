@@ -14,7 +14,7 @@ const AppsInfo = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/apps/${recoredId}`)).data;
+            let data = (await get(`${recorderApiUrl}/api/apps/${recoredId}`)).data;
             setData(data);
             setMax(data.reduce((accumulator, item) => accumulator + item.seconds, 0))
         }
@@ -22,7 +22,7 @@ const AppsInfo = ({recoredId}) => {
     }, []);
 
     const color = useCallback((seconds) => {
-        var percent = seconds / max;
+        const percent = seconds / max;
         
         return percent > 0.5 ? red: percent > 0.25 ?yellow: green;
     });

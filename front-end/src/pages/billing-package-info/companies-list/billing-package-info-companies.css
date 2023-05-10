@@ -1,0 +1,43 @@
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.companies-wrapper {
+    margin: 15px;
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 320px;
+}
+
+.companies-wrapper > div {
+    padding: 5px;
+    width: 300px;
+}
+
+.companies-wrapper > div > h4 {
+    position: relative;
+}
+
+.companies-wrapper > div > h4 > span {
+    position: absolute;
+    right: 5px;
+}
+
+.companies-wrapper > div > p {
+    font-size: 10px;
+}
+
+.no-content-info {
+    text-align: center;
+}
+
+.companies-wrapper .list-item {
+    background: #eee;
+    border-radius: 3px;
+    border: 1px solid #eef;
+    margin-bottom: 2px;
+    cursor: pointer;
+}

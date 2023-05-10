@@ -1,0 +1,36 @@
+.package-info-edit {
+    box-shadow: none;
+}
+
+.package-info-edit #currencies {
+    z-index: 5;
+    padding: 2px;
+}
+
+.package-info-edit div{
+    display: flex;
+    width: 100%;
+    margin: 5px;
+    justify-content: space-between;
+}
+
+.package-info-edit input {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+.package-info-edit input:hover,
+.package-info-edit input:focus {
+    border: 1px solid #aaf;
+    outline:none;
+}
+
+.save-button-wrapper .button {
+    width: 50%;
+    margin: 10px auto;
+}
+
+.package-info-edit .currencies-wrapper {
+    align-items: center;
+}

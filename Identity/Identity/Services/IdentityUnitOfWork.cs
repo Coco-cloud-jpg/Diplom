@@ -13,9 +13,45 @@ namespace Identity.Repositories.Repository
         private IGenericRepository<Country> _countryRepository;
         private IGenericRepository<RefreshToken> _refreshTokenRepository;
         private IGenericRepository<PasswordReset> _passwordResetRepository;
+        private IGenericRepository<Role> _roleRepository;
+        private IGenericRepository<PackageType> _packageTypeRepository;
+        private IGenericRepository<PackageTypeCompany> _packageTypeCompanyRepository;
         public IdentityUnitOfWork(IdentityContext context)
             : base(context)
         {
+        }
+        public IGenericRepository<PackageTypeCompany> PackageTypeCompanyRepository
+        {
+            get
+            {
+                if (this._packageTypeCompanyRepository == null)
+                {
+                    this._packageTypeCompanyRepository = new GenericRepository<PackageTypeCompany>(_context);
+                }
+                return _packageTypeCompanyRepository;
+            }
+        }
+        public IGenericRepository<PackageType> PackageTypeRepository
+        {
+            get
+            {
+                if (this._packageTypeRepository == null)
+                {
+                    this._packageTypeRepository = new GenericRepository<PackageType>(_context);
+                }
+                return _packageTypeRepository;
+            }
+        }
+        public IGenericRepository<Role> RoleRepository
+        {
+            get
+            {
+                if (this._roleRepository == null)
+                {
+                    this._roleRepository = new GenericRepository<Role>(_context);
+                }
+                return _roleRepository;
+            }
         }
         public IGenericRepository<User> UserRepository
         {

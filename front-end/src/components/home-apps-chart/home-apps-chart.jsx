@@ -21,7 +21,7 @@ const HomeAppsChart = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`${recorderApiUrl}/api/apps/chart/${timeRange}`)).data;
+          const data = (await get(`${recorderApiUrl}/api/apps/chart/${timeRange}`)).data;
 
           if (data.length === 0)
             data.push({name: "No data", seconds: 0})
@@ -38,7 +38,7 @@ const HomeAppsChart = () => {
     }, [timeRange])
 
   const color = useCallback((seconds) => {
-      var percent = seconds / max;
+      const percent = seconds / max;
       
       return percent > 0.5 ? red: percent > 0.25 ?yellow: green;
   });
@@ -67,7 +67,8 @@ const HomeAppsChart = () => {
                 bgcolor: 'background.paper',
                 position: 'relative',
                 overflow: 'auto',
-                maxHeight: 751
+                maxHeight: 285,
+                margin: "15px 0"
               }}>
                 {list.map((item, i) => 
                     <ListItem key={i} title={`${secondsToTime(item.seconds)} (${(item.seconds / max * 100).toFixed(2)}% time spent)`}>

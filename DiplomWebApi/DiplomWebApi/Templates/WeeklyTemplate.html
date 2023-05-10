@@ -83,6 +83,14 @@
             background-color: rgba(244, 218, 85, 0.3);
         }
 
+        .screenshot-wrapper {
+            background-color: rgba(202, 43, 29, 0.3);
+        }
+
+        .screenshot-wrapper img {
+            width: 100%;
+        }
+
         img {
             width: 15px;
             margin-bottom: -3px;
@@ -136,7 +144,7 @@
         <div class="desktop">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC3ElEQVR4nO3d3WrUQBjG8ZwqCIIW5t1N8UCll2e3dAbxwN6MglsU70JEbJd3+nWiV1AVu554pozbSpsmTUI2M882zx/maKFJ59d8NmyyjDHGGGOM9dTY7j8Vq+/E6Vyc/9Pv0LlYneaT2bhsXaT35aONwnwEDOP0e+wVMc6flqFI8glKM/7Px2LLSLUS+oYg/up8xNlNVQzrfxLEX52P4iT1dZyq2iVlA0+K80GQtBEELIKABQ8iAKegKa+7COKwrrsI4rCuuwjisK674EBuW3W/L0EiRxCwCAIWQcAiCFgEAYsgYBEELIKARRCwCAIWQcAiCFgEAYsgYBEELIKARRCwCAIWQcAiCFgEAYsgYBEELIKARRCwCAIWQcAiCFgEAYsgYBEELIKARRCwCAIWQcAiCFgEAYsgYBEELIKARRCwCAIWQcAiCFgEAYsgYK08iMT8QrHYYxW/wExST1qPg1/x55Aw/Om63RtxC3GpMfQsbBllGCuxyxpaBAGLIGARBCyCgEUQsAgCFkHAIghYBAELHkSS3+pIOBBfmyepJyX9iyXbg4y2DtbF+beLl1Lq3Dh9P7K6QRDf/W5wW5CAUfbuXGP9j/AZtxDf7W5wW5DFllG5gN2uIE3r+nNi76ob1x7kpnfn6tmyl1cVQZqAlPzPeNkTeRFBzgsH8GoQnWY1EaSm1gd1qxvhAH79oK7fxk7zZS3vgT25Z5zfEadHxunv+Gc9YZl6ZKx/GdYli1WH097dcMz4N6xOm2A0XV7+/PCJWP81NsINx8Yva9sHj7MYxT7bqFue7Hy+a6yepEe4tjs+zicf7gwOxDi/lXzyq7eUzcGBiNVPlz83Tl89eja7n0UuLNNY/7qwvh+HCPLr8udr24cmS9TDF8dS2ELmwwNxcdenrujrQxA4kHDqivs0uICN/kGsTpGfBpehgeST2Tjci0d9GlyGBhIKExP+WuPsvto9DS5go2+MvwFz6lTXpTLlAAAAAElFTkSuQmCC" />
         </div>
-        <h1>Weekly Activity Report</h1>
+        <h1>{{title}}</h1>
         <h3>{{date}}</h3>
         <table class="noborder">
             <tbody>
@@ -174,6 +182,9 @@
             <tbody>
                 {{data}}
             </tbody>
+        </table>
+        <table>
+            {{screenshots}}
         </table>
         <div id="footer">
             <div>

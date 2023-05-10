@@ -118,7 +118,7 @@ const RecordersPage = () => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/recordings?includeDeleted=${includeDeleted}`)).data;
+            let data = (await get(`${recorderApiUrl}/api/recordings?includeDeleted=${includeDeleted}`)).data;
             setRows(data);
             console.log(data);
 

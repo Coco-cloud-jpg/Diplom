@@ -17,5 +17,6 @@ namespace Identity.DTO
         [Required]
         public string Refresh { get; set; }
         public long ValidUntil { get; set; }
+        public string RedirectTo { get; set; }
     }
 }

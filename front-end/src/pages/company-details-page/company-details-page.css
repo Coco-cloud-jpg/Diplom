@@ -1,0 +1,63 @@
+.company-details-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px ;
+}
+
+.company-details-info .icon-wrapper {
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+}
+
+.company-details-info .icon-wrapper svg {
+    font-size: 100px;
+    border: 2px solid rgb(25, 118, 210);
+    background: #eee;
+}
+
+.company-details-info .text-info {
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.company-details-info .text-info span {
+    text-decoration: underline;
+}
+
+.company-details-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1620px;
+}
+
+.company-details-wrapper .left-side > div,
+.company-details-wrapper .right-side > div {
+    margin: 5px;
+}
+
+.company-details-wrapper .left-side, 
+.company-details-wrapper .right-side {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.left-side {
+    width: 40%;
+}
+
+.right-side {
+    width: 60%;
+}
+
+.right-side > div {
+    width: 100%;
+}
+
+.bill-date-expired {
+    color: #f00;
+}

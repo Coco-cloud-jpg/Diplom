@@ -14,8 +14,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecordingService.DTOS;
+using RecordingService.Extensions;
 using RecordingService.Helpers;
 using ScreenMonitorService.Interfaces;
+using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Text;
 
@@ -26,13 +28,15 @@ namespace DiplomWebApi.Controllers
     public class ReportsController : ControllerBase
     {
         private IScreenUnitOfWork _unitOfWork;
-        public ReportsController(IScreenUnitOfWork unitOfWork)
+        private IBlobService _blobService;
+        public ReportsController(IScreenUnitOfWork unitOfWork, IBlobService blobService)
         {
             _unitOfWork = unitOfWork;
+            _blobService = blobService;
         }
 
         [HttpGet("weeklyStat/{recorderId}")]
-        //[Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
+        [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
         public async Task<ActionResult> GetWeeklyStat(Guid recorderId)
         {
             var recorder = await _unitOfWork.RecorderRegistrationRepository.GetById(recorderId, CancellationToken.None);
@@ -40,7 +44,7 @@ namespace DiplomWebApi.Controllers
             if (recorder == null)
                 return NotFound();
 
-            var reviewerName = "Pavlo Reviwer"; //this.GetClaim(ClaimTypes.Name);
+            var reviewerName = this.GetClaim(ClaimTypes.Name);
 
             int sundayOffset = DateTime.Today.DayOfWeek == 0 ? 7 : 0;
             var weekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday - sundayOffset);
@@ -60,7 +64,9 @@ namespace DiplomWebApi.Controllers
                 .Select(item => item.Mark)
                 .ToListAsync();
 
-            html = html.Replace("{{data}}", CreateTable(data, appsIcons, today))
+            html = html.Replace("{{title}}", "Weekly Activity Report")
+                       .Replace("{{screenshots}}", string.Empty)
+                       .Replace("{{data}}", CreateTable(data, appsIcons, today))
                        .Replace("{{warningsCount}}", totalAlertsCount.Count(item => item == AlertState.InternalWarning).ToString())
                        .Replace("{{errorsCount}}", totalAlertsCount.Count(item => item == AlertState.SubmittedViolation).ToString())
                        .Replace("{{date}}", today.ToShortDateString())
@@ -71,7 +77,77 @@ namespace DiplomWebApi.Controllers
 
             return File(ConvertHtmlToPdf(html), System.Net.Mime.MediaTypeNames.Application.Pdf, $"Weekly_Report_Recorder:{recorderId}.pdf");
         }
+        [HttpPost("report")]
+        [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
+        public async Task<ActionResult> GetReport(ReportDTO model)
+        {
+            var recorder = await _unitOfWork.RecorderRegistrationRepository.GetById(model.RecorderId, CancellationToken.None);
 
+            if (recorder == null)
+                return NotFound();
+
+            var reviewerName = this.GetClaim(ClaimTypes.Name);
+
+            var data = await _unitOfWork.WeeklyReportDTORepository.DbSet.FromSqlRaw(GetStatisticsQuery(model.RecorderId, model.Start.ToString("yyyy-MM-dd"), model.End.ToString("yyyy-MM-dd"))).ToListAsync();
+
+            var appsId = data.SelectMany(item => item.AppUsageModels).Select(item => item.Id).ToList();
+
+            var appsIcons = await _unitOfWork.ApplicationInfoRepository.DbSet.Where(item => appsId.Contains(item.Id)).Select(item => new AppsIconModel { IconBase64 = item.IconBase64, Id = item.Id }).ToListAsync();
+
+            var html = System.IO.File.ReadAllText("Templates/WeeklyTemplate.html");
+
+            var today = DateTime.UtcNow.Date;
+
+            var totalAlertsCount = await _unitOfWork.ScreenshotRepository.DbSet
+                .Where(item => item.RecorderId == model.RecorderId && 
+                               item.DateCreated > model.Start && 
+                               item.DateCreated < model.End && 
+                               item.Mark != AlertState.None)
+                .Select(item => item.Mark)
+                .ToListAsync();
+
+            var screenshotsHtml = new StringBuilder();
+
+            if (model.IncludeViolatedScreenshots)
+            {
+                var screenshotsPaths = await _unitOfWork.ScreenshotRepository.DbSet
+                    .Where(item => item.RecorderId == model.RecorderId &&
+                                   item.DateCreated > model.Start &&
+                                   item.DateCreated < model.End &&
+                                   item.Mark == AlertState.SubmittedViolation)
+                    .Select(item => item.StorePath)
+                    .ToListAsync();
+
+                var bag = new ConcurrentBag<string>();
+                var tasks = screenshotsPaths.Select(async item =>
+                {
+                    bag.Add($"data:image/jpeg;base64,{(await _blobService.GetBlobAsync("screenshots", item)).ToBase64String()}");
+                }).ToArray();
+
+                await Task.WhenAll(tasks);
+
+                screenshotsHtml.Append($"<tr><td><h3>Violated Screenshots</h3></td></tr>");
+
+                foreach (var item in bag)
+                {
+                    screenshotsHtml.Append($"<tr><td class='screenshot-wrapper'><img src='{item}'</td></tr>");
+                }
+
+            }
+
+            html = html.Replace("{{title}}", "Custom Activity Report")
+                       .Replace("{{screenshots}}", screenshotsHtml.ToString())
+                       .Replace("{{data}}", CreateTable(data, appsIcons, today))
+                       .Replace("{{warningsCount}}", totalAlertsCount.Count(item => item == AlertState.InternalWarning).ToString())
+                       .Replace("{{errorsCount}}", totalAlertsCount.Count(item => item == AlertState.SubmittedViolation).ToString())
+                       .Replace("{{date}}", today.ToShortDateString())
+                       .Replace("{{holder}}", $"{recorder.HolderName} {recorder.HolderSurname}")
+                       .Replace("{{reviewer}}", reviewerName);
+
+            Response.Headers.AccessControlExposeHeaders = "Content-Disposition";
+
+            return File(ConvertHtmlToPdf(html), System.Net.Mime.MediaTypeNames.Application.Pdf, $"Report_Recorder:{model.RecorderId}.pdf");
+        }
         private string CreateTable(List<WeeklyReportDTO> data, List<AppsIconModel> appsIcons, DateTime today)
         {
             StringBuilder html = new StringBuilder();
@@ -175,6 +251,43 @@ namespace DiplomWebApi.Controllers
             WHERE 
                 type = 'P' 
                 AND number BETWEEN 0 AND 6) as days
+            ";
+
+        private string GetStatisticsQuery(Guid recorderId, string start, string end) =>
+            $@"with dateRange as
+                (
+                  select dt = dateadd(dd, 1, '{start}')
+                  where dateadd(dd, 1, '{start}') <= '{end}'
+                  union all
+                  select dateadd(dd, 1, dt)
+                  from dateRange
+                  where dateadd(dd, 1, dt) <= '{end}'
+                )
+
+                select days.dt as DayOfWeek, 
+                                      newid() as Id,
+                            isnull((select sum(e.Seconds) from Entries e
+                            where e.RecorderId = '{recorderId}' and 
+                            e.Created > days.dt and e.Created < DATEADD(DAY, 1, days.dt) group by cast(Created as date)), 0) as TimeWorked,
+                            isnull((select avg(p.KeyboardActivePercentage) * 100 from PheripheralActivities p
+                            where p.RecorderId = '{recorderId}' and 
+                            p.DateCreated > days.dt and p.DateCreated < DATEADD(DAY, 1, days.dt) group by cast(DateCreated as date)), 0.0) as KeyboardActivity,
+                            isnull((select avg(p.MouseActivePercentage) * 100 from PheripheralActivities p
+                            where p.RecorderId = '{recorderId}' and 
+                            p.DateCreated > days.dt and p.DateCreated < DATEADD(DAY, 1, days.dt) group by cast(DateCreated as date)), 0.0) as MouseActivity,
+                            (select count(1) from Screenshots s
+                            where s.RecorderId = '{recorderId}' and 
+                            s.DateCreated > days.dt and s.DateCreated < DATEADD(DAY, 1, days.dt)) as Screenshots,
+                            isnull((select applicationId as Id, ai.Name, t.seconds from 
+                                                     (select 
+                                                     applicationId, sum(seconds) as seconds 
+                                                     from ApplicationUsageInfos au
+                                                     where au.RecorderId = '{recorderId}' and au.TimeStamp > days.dt and au.TimeStamp < DATEADD(DAY, 1, days.dt)
+                                                     group by applicationId) t
+                                                     inner join ApplicationInfos ai on ai.Id = t.ApplicationId
+                                                     order by t.seconds desc for json path), '') as AppUsage
+                            from 
+                            dateRange as days
             ";
     }
 }

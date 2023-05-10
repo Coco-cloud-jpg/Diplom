@@ -19,8 +19,13 @@ namespace ScreenMonitorService.Interfaces
         IGenericRepository<WeeklyReportDTO> WeeklyReportDTORepository { get; }
         IGenericRepository<ChartDTO> ChartDTORepository { get; }
         IGenericRepository<ChartEntranceDTO> ChartEntranceDTORepository { get; }
+        IGenericRepository<CompanyUsersAndRecordersCountDTO> CompanyUsersAndRecordersCountDTORepository { get; }
         IGenericRepository<AlertRule> AlertRuleRepository { get; }
         IGenericRepository<Comment> CommentRepository { get; }
+        IGenericRepository<PackageType> PackageTypeRepository { get; }
+        IGenericRepository<PackageTypeCompany> PackageTypeCompanyRepository { get; }
+        IGenericRepository<BillingTransaction> BillingTransactionRepository { get; }
+        IGenericRepository<PackageUpgradeRequest> PackageUpgradeRequestRepository { get; }
         Task SaveChangesAsync(CancellationToken cancel);
     }
 }

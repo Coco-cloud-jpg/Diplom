@@ -26,7 +26,7 @@ const ResetPassword = () => {
             return;
         }
         
-        var data = await axios.post('https://localhost:7063/api/register/password-reset', {password: inputPassword, requestId: params.requestId})
+        let data = await axios.post('https://localhost:7063/api/register/password-reset', {password: inputPassword, requestId: params.requestId})
         console.log(data);
         setRequesSubmit(true);
     }

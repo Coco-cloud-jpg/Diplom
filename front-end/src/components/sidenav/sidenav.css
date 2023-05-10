@@ -36,3 +36,21 @@ div {
     border-left: 3px solid #fff;
     background: rgba(5, 98, 190, 0.7);
 }
+
+.company-info-block {
+    max-height: 65px;
+    min-height: 65px;
+    background: #1976D2;
+    text-align: center;
+    color: #fff;
+    text-transform: uppercase;
+    border-bottom: 5px solid #fff !important;
+    max-height: 240px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.company-info-block p {
+    margin-left: 15px;
+}

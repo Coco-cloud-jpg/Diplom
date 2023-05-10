@@ -104,6 +104,29 @@ namespace Identity.Models
                 entity.ToTable("Comments");
             });
 
+            modelBuilder.Entity<PackageType>(entity =>
+            {
+                entity.ToTable("PackageTypes");
+            });
+
+            modelBuilder.Entity<PackageTypeCompany>(entity =>
+            {
+                entity.AddPackageTypeCompanyEntityBase();
+                entity.ToTable("PackageTypeCompanies");
+            });
+
+            modelBuilder.Entity<BillingTransaction>(entity =>
+            {
+                entity.AddBillingTransactionEntityBase();
+                entity.ToTable("BillingTransactions");
+            });
+
+            modelBuilder.Entity<PackageUpgradeRequest>(entity =>
+            {
+                entity.AddPackageTypeUpgradeRequests();
+                entity.ToTable("PackageUpgradeRequests");
+            });
+
             modelBuilder.Entity<Role>().HasData(new Role
             {
                 Name = nameof(Common.Constants.Role.SystemAdmin),
@@ -127,7 +150,37 @@ namespace Identity.Models
                     LastName = "Koval",
                     Email = "palya1703@gmail.com",
                     RoleId = Guid.Parse(Common.Constants.Role.SystemAdmin),
-                    Password = "779498b489bd0915a7091d4bdfb95d0f2a1dfa8b4fd9003280b0c7984ffea817"
+                    Password = "779498b489bd0915a7091d4bdfb95d0f2a1dfa8b4fd9003280b0c7984ffea817",
+                    IsActive = true
+                });
+
+            modelBuilder.Entity<PackageType>().HasData(
+                new PackageType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Basic USD",
+                    MaxRecordersCount = 5,
+                    MaxUsersCount = 2,
+                    Price = 20,
+                    Currency = (short)Currency.USD
+                },
+                new PackageType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Advanced USD",
+                    MaxRecordersCount = 15,
+                    MaxUsersCount = 8,
+                    Price = 50,
+                    Currency = (short)Currency.USD
+                },
+                new PackageType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "High Capacity USD",
+                    MaxRecordersCount = 25,
+                    MaxUsersCount = 15,
+                    Price = 80,
+                    Currency = (short)Currency.USD
                 });
 
             base.OnModelCreating(modelBuilder);

@@ -15,7 +15,7 @@ const RecorderDetailsTile = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/recordings/${recoredId}`)).data;
+            let data = (await get(`${recorderApiUrl}/api/recordings/${recoredId}`)).data;
            
             console.log(data);
 

@@ -28,7 +28,7 @@ namespace Identity.Controllers
         }
         [HttpPost("user")]
         [Authorize(Roles = nameof(Common.Constants.Role.SystemAdmin))]
-        public async Task<ActionResult> Register(UserCreate model)
+        public async Task<ActionResult> Register(UserCreateDTO model)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Bad credentials");
@@ -112,14 +112,17 @@ namespace Identity.Controllers
 
             var createdId = Guid.NewGuid();
 
+            var utcNow = DateTime.UtcNow;
+
             await _identityUnitOfWork.CompanyRepository.Create(new Company
             {
                 Id = createdId,
                 Name = model.Name,
                 Email = model.Email,
                 IsActive = true,
-                DateCreated = DateTime.UtcNow,
-                CountryId = model.CountryId
+                DateCreated = utcNow,
+                CountryId = model.CountryId,
+                TimeToPayForBills = utcNow.AddDays(2)
             }, CancellationToken.None);
 
             await _identityUnitOfWork.SaveChangesAsync(CancellationToken.None);

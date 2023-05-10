@@ -43,7 +43,7 @@ const HomeEntrance = () => {
 
     useEffect(() => {
       async function getData() {
-          var data = (await get(`${recorderApiUrl}/api/entrance/chart/${timeRange}`)).data;
+          let data = (await get(`${recorderApiUrl}/api/entrance/chart/${timeRange}`)).data;
           console.log(data);
           setChartConfigs(
               {

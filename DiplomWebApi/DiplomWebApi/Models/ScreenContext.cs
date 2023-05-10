@@ -21,13 +21,22 @@ namespace ScreenMonitorService.Models
         public virtual DbSet<Screenshot> Screenshots { get; set; } = null!;
         public virtual DbSet<RecorderRegistrationReadDTO> RecorderRegistrationDTOs { get; set; } = null!;
         public virtual DbSet<AppUsageDTO> AppUsageDTOs { get; set; } = null!;
+        public virtual DbSet<CompanyUsersAndRecordersCountDTO> CompanyUsersAndRecordersCountDTOs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Country>(entity =>
+            {
+                entity.AddCountryEntityBase();
+                entity.ToTable("Countries");
+            });
+
             modelBuilder.Entity<Company>(entity =>
             {
                 entity.AddCompnayEntityBase();
+                entity.ToTable("Companies");
             });
+
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -82,11 +91,35 @@ namespace ScreenMonitorService.Models
                 entity.ToTable("Comments");
             });
 
+            modelBuilder.Entity<PackageType>(entity =>
+            {
+                entity.ToTable("PackageTypes");
+            });
+
+            modelBuilder.Entity<PackageTypeCompany>(entity =>
+            {
+                entity.AddPackageTypeCompanyEntityBase();
+                entity.ToTable("PackageTypeCompanies");
+            });
+
+            modelBuilder.Entity<BillingTransaction>(entity =>
+            {
+                entity.AddBillingTransactionEntityBase();
+                entity.ToTable("BillingTransactions");
+            });
+
+            modelBuilder.Entity<PackageUpgradeRequest>(entity =>
+            {
+                entity.AddPackageTypeUpgradeRequests();
+                entity.ToTable("PackageUpgradeRequests");
+            });
+
             modelBuilder.Entity<RecorderRegistrationReadDTO>().ToView(null);
             modelBuilder.Entity<AppUsageDTO>().ToView(null);
             modelBuilder.Entity<WeeklyReportDTO>().Ignore(item => item.DayOfWeekString).ToView(null);
             modelBuilder.Entity<ChartDTO>().ToView(null);
             modelBuilder.Entity<ChartEntranceDTO>().ToView(null);
+            modelBuilder.Entity<CompanyUsersAndRecordersCountDTO>().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
         }

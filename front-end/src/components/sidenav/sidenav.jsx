@@ -1,4 +1,4 @@
-import {memo, useState} from 'react';
+import {memo, useState, forwardRef} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -26,6 +26,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import WarningIcon from '@mui/icons-material/Warning';
 import SummarizeIcon from '@mui/icons-material/Summarize';
+import { get } from '../../helpers/axiosHelper';
+import { useEffect } from 'react';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import GroupIcon from '@mui/icons-material/Group';
+import { identityApiUrl } from '../../constants';
+import { Dialog, DialogContent, DialogTitle, Paper, Popover, Slide } from '@mui/material';
+import AccountInfo from '../account-info/account-info';
 
 const navData = [
         {
@@ -57,27 +65,74 @@ const navData = [
               icon: <SummarizeIcon  style={{color: "#fff"}}/>,
               text: "Reports",
               link: "/reports"
-      }
+        },
+        {
+              id: 5,
+              icon: <HomeIcon style={{color: "#fff"}}/>,
+              text: "Home",
+              link: "/home-admin"
+        },
+        {
+              id: 6,
+              icon: <ApartmentIcon style={{color: "#fff"}}/>,
+              text: "Companies",
+              link: "/companies"
+        },
+        {
+              id: 7,
+              icon: <CreditCardIcon style={{color: "#fff"}}/>,
+              text: "Billing",
+              link: "/billing"
+        },
+        {
+              id: 8,
+              icon: <GroupIcon style={{color: "#fff"}}/>,
+              text: "Users",
+              link: "/users"
+        },
     ]
 
 const drawerWidth = 240;
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const SideNav = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const [tokens, setTokens] = useLocalStorage("tokens", null);
+  const [currentUserRoutes, setCurrentUserRoutes] = useState([]);
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState({});
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  useEffect(() => {
+       async function getAccountInfo() {
+           try {
+               const data = (await get(`${identityApiUrl}/api/account`)).data;
+               const routes = data.routes;
+               setCurrentUserRoutes(navData.filter(item => routes.includes(item.link)));
+               setUserInfo(data.userInfo);
+           }
+           catch (e){
+               console.log("ehere");
+               console.log(e);
+           }
+       }
+
+       getAccountInfo();
+  }, [])
+
   const drawer = (
     <div className="drawer">
       <div>
         <List>
-          {navData.map((item) => (
+          {currentUserRoutes.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ marginTop: 1}} className={(location.pathname.startsWith(item.link)?"active":"")}>
               <ListItemButton onClick={() => {navigate(`${item.link.toLowerCase()}`)}} sx={{position: 'relative'}}>
                 <ListItemIcon>
@@ -129,9 +184,6 @@ const SideNav = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ textTransform: "capitalize" }}>
-            {location.pathname.replace("/","").replaceAll("/", ":")}
-          </Typography>
         </Toolbar>
       </AppBar>
       <Box
@@ -162,7 +214,11 @@ const SideNav = (props) => {
           }}
           open
         >
+          <div className='company-info-block'>
+          {userInfo.companyName ? <><ApartmentIcon /><p>{userInfo.companyName}</p></>:<p>Admin panel</p>}
+          </div>
           {drawer}
+          <AccountInfo userInfo={userInfo} />
         </Drawer>
       </Box>
       <Box

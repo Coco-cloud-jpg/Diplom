@@ -1,0 +1,65 @@
+.transactions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.transactions form.sum-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    box-shadow: none;
+}
+
+.transactions .sum-wrapper #sum {
+    height: 36px;
+    line-height: 24px;
+    outline: none !important;
+}
+
+.transactions #currencies {
+    z-index: 5;
+}
+
+.transactions .sum-wrapper button {
+    padding: 5px 20px;
+    margin: 0 auto;
+    border-radius: 5px;
+    background: #1976D2;
+    color: #fff;
+    transition: all 0.2s;
+    line-height: 29px;
+    width: 255px;
+    text-transform: uppercase;
+    font-family: Montserrat;
+}
+
+.transaction-wrapper {
+    max-height: 100px;
+    overflow-y: auto;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    width: 95%;
+}
+
+.transaction-wrapper .list-item {
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin: 5px;
+}
+
+.transaction-wrapper .list-item p {
+    display: flex;
+    justify-content: space-around;
+}
+
+.transaction-wrapper .list-item p .sum {
+    color: #46992c;
+}
+
+.transaction-menu-wrapper {
+    width: 100%;
+    padding: 0 10px;
+}

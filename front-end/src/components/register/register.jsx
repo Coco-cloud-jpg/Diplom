@@ -53,7 +53,7 @@ const Register = ({setView}) => {
                 return;
             }
             
-            var data = await axios.post('https://localhost:7063/api/register/company', {name: inputName, email: inputEmail, countryId: inputCountry})
+            let data = await axios.post('https://localhost:7063/api/register/company', {name: inputName, email: inputEmail, countryId: inputCountry})
             console.log(data);
             setRegistrationSubmit(true);
         }

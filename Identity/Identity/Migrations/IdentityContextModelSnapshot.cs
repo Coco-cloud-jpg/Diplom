@@ -100,6 +100,31 @@ namespace Identity.Migrations
                     b.ToTable("ApplicationUsageInfos", (string)null);
                 });
 
+            modelBuilder.Entity("Common.Models.BillingTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("Currency")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("BillingTransactions", (string)null);
+                });
+
             modelBuilder.Entity("Common.Models.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -155,6 +180,9 @@ namespace Identity.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("name");
 
+                    b.Property<DateTime>("TimeToPayForBills")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
@@ -198,6 +226,119 @@ namespace Identity.Migrations
                     b.HasIndex("RecorderId");
 
                     b.ToTable("Entries", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Models.PackageType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("Currency")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("MaxRecordersCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxUsersCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PackageTypes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("008a13c8-0b08-43a1-8b86-bc2291aa5130"),
+                            Currency = (short)0,
+                            MaxRecordersCount = 5,
+                            MaxUsersCount = 2,
+                            Name = "Basic USD",
+                            Price = 20m
+                        },
+                        new
+                        {
+                            Id = new Guid("ea34b98f-e623-4162-8aa7-48538b57173a"),
+                            Currency = (short)0,
+                            MaxRecordersCount = 15,
+                            MaxUsersCount = 8,
+                            Name = "Advanced USD",
+                            Price = 50m
+                        },
+                        new
+                        {
+                            Id = new Guid("bc5ecb2b-6300-4d95-b2b2-97551c4cfe05"),
+                            Currency = (short)0,
+                            MaxRecordersCount = 25,
+                            MaxUsersCount = 15,
+                            Name = "High Capacity USD",
+                            Price = 80m
+                        });
+                });
+
+            modelBuilder.Entity("Common.Models.PackageTypeCompany", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("Count")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PackageTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("PackageTypeId");
+
+                    b.ToTable("PackageTypeCompanies", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Models.PackageUpgradeRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PackageTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("PackagesCount")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("Status")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("PackageTypeId");
+
+                    b.ToTable("PackageUpgradeRequests", (string)null);
                 });
 
             modelBuilder.Entity("Common.Models.PasswordReset", b =>
@@ -407,10 +548,10 @@ namespace Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5e633f07-0b8d-40d3-a6b2-20f15cf09a0d"),
+                            Id = new Guid("4bb728ef-981b-4af5-b887-a09b9af2160b"),
                             Email = "palya1703@gmail.com",
                             FirstName = "Pavlo",
-                            IsActive = false,
+                            IsActive = true,
                             LastName = "Koval",
                             Password = "779498b489bd0915a7091d4bdfb95d0f2a1dfa8b4fd9003280b0c7984ffea817",
                             RoleId = new Guid("00551457-f277-4ca9-9cf0-611268bdd2a3")
@@ -453,6 +594,17 @@ namespace Identity.Migrations
                     b.Navigation("Recorder");
                 });
 
+            modelBuilder.Entity("Common.Models.BillingTransaction", b =>
+                {
+                    b.HasOne("Common.Models.Company", "Company")
+                        .WithMany("BillingTransactions")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("Common.Models.Comment", b =>
                 {
                     b.HasOne("Common.Models.User", "User")
@@ -492,6 +644,44 @@ namespace Identity.Migrations
                         .IsRequired();
 
                     b.Navigation("Recorder");
+                });
+
+            modelBuilder.Entity("Common.Models.PackageTypeCompany", b =>
+                {
+                    b.HasOne("Common.Models.Company", "Company")
+                        .WithMany("PackageTypeCompanies")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.PackageType", "PackageType")
+                        .WithMany("PackageTypeCompanies")
+                        .HasForeignKey("PackageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("PackageType");
+                });
+
+            modelBuilder.Entity("Common.Models.PackageUpgradeRequest", b =>
+                {
+                    b.HasOne("Common.Models.Company", "Company")
+                        .WithMany("PackageUpgradeRequests")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.PackageType", "PackageType")
+                        .WithMany("PackageUpgradeRequests")
+                        .HasForeignKey("PackageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("PackageType");
                 });
 
             modelBuilder.Entity("Common.Models.PasswordReset", b =>
@@ -575,6 +765,12 @@ namespace Identity.Migrations
                 {
                     b.Navigation("AlertRules");
 
+                    b.Navigation("BillingTransactions");
+
+                    b.Navigation("PackageTypeCompanies");
+
+                    b.Navigation("PackageUpgradeRequests");
+
                     b.Navigation("RecorderRegistrations");
 
                     b.Navigation("Users");
@@ -583,6 +779,13 @@ namespace Identity.Migrations
             modelBuilder.Entity("Common.Models.Country", b =>
                 {
                     b.Navigation("Companies");
+                });
+
+            modelBuilder.Entity("Common.Models.PackageType", b =>
+                {
+                    b.Navigation("PackageTypeCompanies");
+
+                    b.Navigation("PackageUpgradeRequests");
                 });
 
             modelBuilder.Entity("Common.Models.RecorderRegistration", b =>

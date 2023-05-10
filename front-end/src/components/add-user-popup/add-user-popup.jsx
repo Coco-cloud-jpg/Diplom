@@ -30,7 +30,7 @@ const AddUserPopup = ({opened, close, recorderId}) => {
         e.preventDefault();
         setLoading(true);
 
-        var data = await post (`${recorderApiUrl}/api/recordings`, 
+        const data = await post (`${recorderApiUrl}/api/recordings`, 
             {
                 holderName: inputHolderName, 
                 holderSurname: inputHolderSurname

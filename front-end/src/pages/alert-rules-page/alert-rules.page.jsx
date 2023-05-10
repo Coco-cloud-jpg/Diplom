@@ -124,7 +124,7 @@ const AlertRulesPage = () => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/alerts?page=${controller.page}&pageSize=${controller.pageSize}`)).data;
+            let data = (await get(`${recorderApiUrl}/api/alerts?page=${controller.page}&pageSize=${controller.pageSize}`)).data;
             setRows(data);
 
             setLoading(false);

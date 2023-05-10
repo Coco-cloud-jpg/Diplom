@@ -13,7 +13,7 @@ const RecorderChart = ({recoredId}) => {
 
     useEffect(() => {
         async function getData() {
-            var data = (await get(`${recorderApiUrl}/api/entrance/week/${recoredId}`)).data;
+            let data = (await get(`${recorderApiUrl}/api/entrance/week/${recoredId}`)).data;
             //chartData.labels = Object.keys(data);
             setData(data);
             setLoading(false);
