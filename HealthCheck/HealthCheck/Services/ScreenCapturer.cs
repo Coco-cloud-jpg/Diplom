@@ -8,12 +8,10 @@ namespace HealthCheck.Services
 {
     internal class ScreenCapturer
     {
-        private readonly HttpClientService _httpClientService;
         private readonly HttpClient _httpClient;
 
         internal ScreenCapturer()
         {
-            _httpClientService = new HttpClientService();
             _httpClient = new HttpClient();
         }
         public void SendScreenshotWebAPI(Guid recorderId, string url = $"{Constants.WebApiURL}api/screen")
@@ -22,10 +20,8 @@ namespace HealthCheck.Services
             {
                 System.Diagnostics.Trace.WriteLine("Capturing start");
                 Image img = CaptureScreen();
-                //Bitmap resizedImage = new Bitmap(img, new Size((int)(img.Width / 1.5), (int)(img.Height / 1.5)));
                 using var stream = new MemoryStream();
                 img.Save(stream, ImageFormat.Jpeg);
-                //resizedImage.Save(stream, ImageFormat.Jpeg);
                 byte[] bytes = stream.ToArray();
 
                 var json = JsonConvert.SerializeObject(new ScreenshotCreateModel { Base64 = Convert.ToBase64String(bytes), RecorderId = recorderId });

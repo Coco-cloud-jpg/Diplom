@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Common" Version="2023.5.7.2210" />
-    <PackageReference Include="IronOcr" Version="2023.1.11644" />
     <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="itext7.pdfhtml" Version="4.0.5" />
     <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.3" />
@@ -29,7 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Templates\" />
+    <ProjectReference Include="..\BL\BL.csproj" />
+    <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 
 </Project>

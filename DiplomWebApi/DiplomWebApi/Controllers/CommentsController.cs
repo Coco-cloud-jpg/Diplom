@@ -1,13 +1,9 @@
 ﻿using Common.Extensions;
-using Common.Models;
-using Common.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RecordingService.DTOS;
-using RecordingService.Extensions;
-using ScreenMonitorService.Interfaces;
+using DAL.DTOS;
 using System.Security.Claims;
+using BL.Services;
 
 namespace DiplomWebApi.Controllers
 {
@@ -15,10 +11,10 @@ namespace DiplomWebApi.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private IScreenUnitOfWork _unitOfWork;
-        public CommentsController(IScreenUnitOfWork unitOfWork)
+        private ICommentsService _commentsService;
+        public CommentsController(ICommentsService commentsService)
         {
-            _unitOfWork = unitOfWork;
+            _commentsService = commentsService;
         }
         [HttpGet("{screenshotId}")]
         [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
@@ -26,17 +22,7 @@ namespace DiplomWebApi.Controllers
         {
             try
             {
-                return Ok(await _unitOfWork.CommentRepository.DbSet
-                    .Include(item => item.User)
-                    .Where(item => item.ScreenshotId == screenshotId)
-                    .OrderByDescending(item => item.DatePosted)
-                    .Select(item => new CommentDTO
-                    {
-                        Text = item.Text,
-                        DatePosted = item.DatePosted.ToString("g"),
-                        PosterName = $"{item.User.FirstName} {item.User.LastName}"
-                    })
-                    .ToListAsync(cancellationToken));
+                return Ok(await _commentsService.GetScreenshots(screenshotId, cancellationToken));
             }
             catch (Exception e)
             {
@@ -50,16 +36,7 @@ namespace DiplomWebApi.Controllers
             try
             {
                 var userId = Guid.Parse(this.GetClaim(ClaimTypes.NameIdentifier));
-
-                await _unitOfWork.CommentRepository.Create(new Comment
-                {
-                    DatePosted = DateTime.UtcNow,
-                    CreatorId = userId,
-                    ScreenshotId = screenshotId,
-                    Text = model.Text
-                }, cancellationToken);
-
-                await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+                await _commentsService.Add(userId, screenshotId, model, cancellationToken);
 
                 return Ok();
             }

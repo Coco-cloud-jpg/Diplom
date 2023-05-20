@@ -1,13 +1,8 @@
-﻿using Identity.DTO;
-using Identity.Interfaces;
-using Identity.Services;
-using Identity.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Common.Constants;
 using Common.Extensions;
 using System.Security.Claims;
+using BL.Services;
 
 namespace Identity.Controllers
 {
@@ -16,18 +11,11 @@ namespace Identity.Controllers
     [Authorize]
     public class AccountController : ControllerBase
     {
-        private IIdentityUnitOfWork _unitOfWork;
+        private IAccountService _accountService;
 
-        private readonly Dictionary<string, List<string>> _rolesToRoutes = new Dictionary<string, List<string>>
+        public AccountController(IAccountService accountService)
         {
-            { Role.User, new List<string> { "/home", "/recorders", "/recorder-info/:id", "/alerts", "/warnings", "/reports" } },
-            { Role.CompanyAdmin, new List<string> { "/home", "/recorders", "/recorder-info/:id", "/alerts", "/warnings", "/reports", "/users" } },
-            { Role.SystemAdmin, new List<string> { "/home-admin", "/companies", "/billing" } }
-        };
-
-        public AccountController(IIdentityUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -39,22 +27,7 @@ namespace Identity.Controllers
             if (roleId == null)
                 return Unauthorized();
 
-            var userInfo = await _unitOfWork.UserRepository.DbSet.Include(item => item.Company)
-                .Include(item => item.Role).AsNoTracking().Where(item => item.Id == userId)
-                .Select(item => new UserInfo
-                {
-                    Id = item.Id,
-                    FullName = $"{item.FirstName} {item.LastName}",
-                    Email = item.Email,
-                    CompanyName = item.Company.Name,
-                    RoleName = item.Role.Name
-                }).FirstOrDefaultAsync();
-
-            return Ok(new AccountDTORead
-            {
-                Routes = _rolesToRoutes[roleId],
-                UserInfo = userInfo
-            });
+            return Ok(await _accountService.Get(roleId, userId));
         }
     }
 }

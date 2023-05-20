@@ -1,16 +1,7 @@
-﻿using Common.Models;
-using Common.Services.Interfaces;
-using DiplomWebApi.DTOS;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RecordingService.Services.Interfaces;
-using ScreenMonitorService.Interfaces;
-using ScreenMonitorService.Models;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Processing;
-using System.Collections.Concurrent;
+using BL.Services;
+using DAL.DTOS;
 
 namespace DiplomWebApi.Controllers
 {
@@ -19,68 +10,17 @@ namespace DiplomWebApi.Controllers
     [AllowAnonymous]
     public class ScreenController : ControllerBase
     {
-        private IScreenUnitOfWork _unitOfWork;
-        private IOcrService _ocrService;
-        private IBlobService _blobService;
-        public ScreenController(IScreenUnitOfWork unitOfWork, IBlobService blobService, IOcrService ocrService)
+        private IScreenshotTakeService _screenService;
+        public ScreenController(IScreenshotTakeService screenService)
         {
-            _unitOfWork = unitOfWork;
-            _blobService = blobService;
-            _ocrService = ocrService;
+            _screenService = screenService;
         }
         //TODO Add recorder token login table, though only one instance can add screenshots via login
         [HttpPost]
         public async Task<IActionResult> AddScreenShot([FromBody] ScreenshotCreateDTO model)
         {
-            try
-            {
-                var companyId = await _unitOfWork.RecorderRegistrationRepository.DbSet
-                    .Where(item => item.Id == model.RecorderId && item.IsActive)
-                    .Select(item => item.CompanyId).FirstOrDefaultAsync();
-
-                if (companyId == null)
-                    return BadRequest();
-
-                //var dayStart = (DateTime)DateTime.UtcNow.Date;
-
-                //var screenshotsToday = await _unitOfWork.ScreenshotRepository.DbSet.Where(item => item.RecorderId == model.RecorderId && item.DateCreated > dayStart).CountAsync();
-
-                //if (screenshotsToday > RecordingService.Constants.ScreenshotADayMax)
-                //    return null;
-                var load = Convert.FromBase64String(model.Base64);
-                var img = Image.Load(load);
-                img.Mutate(x => x.Resize(new ResizeOptions
-                {
-                    Size = new Size(img.Width / 2, img.Height / 2)
-                }));
-
-                var dateTimeNow = DateTime.UtcNow;
-                
-                var screenId = Guid.NewGuid();
-                var path = $"{companyId}/{model.RecorderId}/{screenId}.jpeg";
-                var base64Resized = img.ToBase64String(JpegFormat.Instance).Split(",")[1];
-                await _blobService.UploadFileBlobAsync("screenshots", base64Resized, path);
-
-                await _unitOfWork.ScreenshotRepository.Create(new Screenshot
-                {
-                    Id = screenId,
-                    RecorderId = model.RecorderId,
-                    DateCreated = dateTimeNow,
-                    StorePath = path,
-                }, CancellationToken.None);
-
-                await _unitOfWork.SaveChangesAsync(CancellationToken.None);
-
-                //not awaited proccessing
-                await _ocrService.Process(model.Base64, companyId, model.RecorderId, screenId, _unitOfWork);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                var s = 2;
-                throw;
-            }
+            await _screenService.AddScreenShot(model);
+            return Ok();
         }
     }
 }

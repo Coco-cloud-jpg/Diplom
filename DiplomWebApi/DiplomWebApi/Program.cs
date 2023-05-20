@@ -1,8 +1,8 @@
+using BL.Extensions;
 using Common.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RecordingService.Hubs;
-using ScreenMonitorService.Extensions;
 using ScreenMonitorService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +26,7 @@ builder.Services.AddCors((a) => {
     });
 });
 builder.Services.AddDbContext<ScreenContext>(opt => opt.UseSqlServer(configuration["ConnectionStrings:DiplomaIdentity"]));
-builder.Services.AddServices();
+builder.Services.AddBL();
 builder.Services.AddJwt(configuration);
 builder.Services.AddBlob(configuration["ConnectionStrings:Blob"]);
 builder.Services.AddSignalR(o => o.MaximumReceiveMessageSize = long.MaxValue);

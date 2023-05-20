@@ -1,7 +1,7 @@
-using Identity.Extensions;
-using Identity.Models;
 using Microsoft.EntityFrameworkCore;
 using Common.Extensions;
+using BL.Extensions;
+using DAL.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var corsPolicy = "main";
@@ -13,8 +13,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors((a) => a.AddPolicy(corsPolicy, policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-builder.Services.AddDbContext<IdentityContext>(opt => opt.UseSqlServer(configuration["ConnectionStrings:DiplomaIdentity"]));
-builder.Services.AddServices();
+builder.Services.AddDbContext<IdentityContext>(opt => opt.UseSqlServer(configuration["ConnectionStrings:DiplomaIdentity"], b => b.MigrationsAssembly("Identity")));
+builder.Services.AddBl();
 builder.Services.AddSwaggerGen();
 builder.Services.AddJwt(configuration);
 builder.Services.AddEmail(configuration);

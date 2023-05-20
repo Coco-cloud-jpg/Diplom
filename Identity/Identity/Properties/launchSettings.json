@@ -32,7 +32,13 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "sslPort": 7063,
+      "environmentVariables": {
+        "diploma_common": "c7f3d59c-d7e6-4360-9a08-641bb42d984e",
+        "diploma_common_secret": "og58Q~EQP6uY.LiBqFWrjQs-o9_uHfEIalXLIamh",
+        "diploma_key_vault": "https://maincommonkeyvault.vault.azure.net/"
+      }
     }
   }
 }

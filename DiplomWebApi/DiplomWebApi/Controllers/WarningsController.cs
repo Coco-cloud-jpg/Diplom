@@ -1,13 +1,9 @@
 ﻿using Common.Extensions;
-using Common.Models;
-using Common.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RecordingService.DTOS;
-using RecordingService.Extensions;
-using ScreenMonitorService.Interfaces;
+using DAL.DTOS;
 using System.Security.Claims;
+using BL.Services;
 
 namespace DiplomWebApi.Controllers
 {
@@ -15,12 +11,10 @@ namespace DiplomWebApi.Controllers
     [ApiController]
     public class WarningsController : ControllerBase
     {
-        private IScreenUnitOfWork _unitOfWork;
-        private IBlobService _blobService;
-        public WarningsController(IScreenUnitOfWork unitOfWork, IBlobService blobService)
+        private IWarningsService _warningsService;
+        public WarningsController(IWarningsService warningsService)
         {
-            _unitOfWork = unitOfWork;
-            _blobService = blobService;
+            _warningsService = warningsService;
         }
         [HttpPost("{screenshotId}")]
         [Authorize(Roles = $"{nameof(Common.Constants.Role.CompanyAdmin)},{nameof(Common.Constants.Role.User)}")]
@@ -29,26 +23,7 @@ namespace DiplomWebApi.Controllers
             try
             {
                 var userId = Guid.Parse(this.GetClaim(ClaimTypes.NameIdentifier));
-
-                var screenshot = await _unitOfWork.ScreenshotRepository.GetById(screenshotId, cancellationToken);
-
-                if (screenshot == null)
-                    return NotFound();
-
-                screenshot.Mark = (AlertState)model.Mark;
-
-                if (model.PostComment)
-                {
-                    await _unitOfWork.CommentRepository.Create(new Comment
-                    {
-                        DatePosted = DateTime.UtcNow,
-                        CreatorId = userId,
-                        ScreenshotId = screenshotId,
-                        Text = model.Text
-                    }, cancellationToken);
-                }
-
-                await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+                await _warningsService.Add(userId, screenshotId, model, cancellationToken);
 
                 return Ok();
             }
@@ -65,32 +40,7 @@ namespace DiplomWebApi.Controllers
             {
                 var companyId = Guid.Parse(this.GetClaim("CompanyId"));
 
-                var screenshotEntry = await _unitOfWork.ScreenshotRepository.DbSet
-                    .Include(item => item.Recorder)
-                    .Where(item => item.Recorder.CompanyId == companyId && item.Mark == AlertState.InternalWarning)
-                    .OrderByDescending(item => item.DateCreated)
-                    .Skip(page)
-                    .Select(item => new ScreenshotWarning
-                    {
-                        Id = item.Id,
-                        Path = item.StorePath
-                    })
-                    .FirstOrDefaultAsync(cancellationToken);
-
-                var totalTask = _unitOfWork.ScreenshotRepository.DbSet
-                    .Include(item => item.Recorder)
-                    .Where(item => item.Recorder.CompanyId == companyId && item.Mark == AlertState.InternalWarning)
-                    .CountAsync(cancellationToken);
-
-                if (screenshotEntry == null)
-                    return NotFound();
-
-                screenshotEntry.Base64 = $"data:image/jpeg;base64,{(await _blobService.GetBlobAsync("screenshots", screenshotEntry.Path)).ToBase64String()}";
-
-                return Ok(new GridResult<ScreenshotWarning> { 
-                    Data = new List<ScreenshotWarning> { screenshotEntry },
-                    Total = await totalTask
-                });
+                return Ok(await _warningsService.GetAllWarnings(companyId, page, cancellationToken));
             }
             catch (Exception e)
             {

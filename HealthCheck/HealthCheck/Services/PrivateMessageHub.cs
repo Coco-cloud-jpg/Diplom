@@ -34,9 +34,6 @@ namespace HealthCheck.Services
             {
                 try
                 {
-                    Debug.WriteLine("asd");
-                    Debug.WriteLine(message);
-
                     if (message.RecorderId == recorderId)
                     {
                         //TimerConfig();
@@ -47,7 +44,6 @@ namespace HealthCheck.Services
                 catch (Exception e)
                 {
                     Stop();
-                    var s = 2;
                 }
             });
 
@@ -109,9 +105,8 @@ namespace HealthCheck.Services
                 {
                     await _connection.StartAsync();
                 }
-                catch (Exception e)
+                catch
                 {
-                    var s = 2;
                 }
                 finally
                 {

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecordingService", "DiplomW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{2B5ECBD4-AEFB-4BF5-B044-A871D859749A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{1635F85E-32F9-40E8-91AD-952FF790AD01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2B5ECBD4-AEFB-4BF5-B044-A871D859749A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B5ECBD4-AEFB-4BF5-B044-A871D859749A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B5ECBD4-AEFB-4BF5-B044-A871D859749A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1635F85E-32F9-40E8-91AD-952FF790AD01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1635F85E-32F9-40E8-91AD-952FF790AD01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1635F85E-32F9-40E8-91AD-952FF790AD01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1635F85E-32F9-40E8-91AD-952FF790AD01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,6 +8,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["DiplomWebApi/RecordingService.csproj", "DiplomWebApi/"]
+COPY ["DAL/DAL.csproj", "DAL/"]
+COPY ["BL/BL.csproj", "BL/"]
 RUN dotnet restore "DiplomWebApi/RecordingService.csproj"
 COPY . .
 WORKDIR "/src/DiplomWebApi"
